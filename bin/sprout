@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+
+<?php
+
+use Graze\Sprout\Command\DumpCommand;
+use Graze\Sprout\Command\SeedCommand;
+use Symfony\Component\Console\Application;
+
+require_once '../vendor/autoload.php';
+
+mb_internal_encoding("UTF-8");
+mb_http_output("UTF-8");
+
+$console = new Application();
+
+$console->add(new DumpCommand());
+$console->add(new SeedCommand());
+$console->add(new ChopCommand());
+
+$console->run();

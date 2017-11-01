@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  test:
+    image: graze/php-alpine:test
+    volumes:
+      - .:/srv
+    working_dir: /srv
+
+  db:
+    image: mysql
+    environment:
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: the_schema
