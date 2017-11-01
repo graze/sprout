@@ -14,8 +14,10 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
 use Graze\Sprout\Dump\Dumper;
+use Graze\Sprout\Dump\TableDumperFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -62,7 +64,9 @@ class DumpCommand extends Command
         $schemaConfiguration = $config->getSchemaConfiguration($schema);
         $schemaPath = $config->getSchemaPath($schema);
 
-        $dumper = new Dumper($schemaConfiguration, $output);
+        $processTable = new Table($output);
+
+        $dumper = new Dumper($schemaConfiguration, $output, new TableDumperFactory($processTable));
         $dumper->dump($schemaPath, $tables);
 
         return 0;

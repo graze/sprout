@@ -14,8 +14,10 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
 use Graze\Sprout\Seed\Seeder;
+use Graze\Sprout\Seed\TableSeederFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -73,7 +75,9 @@ class SeedCommand extends Command
             }
         }
 
-        $seeder = new Seeder($schemaConfiguration, $output);
+        $processTable = new Table($output);
+
+        $seeder = new Seeder($schemaConfiguration, $output, new TableSeederFactory($processTable));
         $seeder->seed($schemaPath, $tables);
 
         return 0;

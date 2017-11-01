@@ -46,10 +46,9 @@ class Chopper
     /**
      * Chop a collection of files to tables
      *
-     * @param string   $path
      * @param string[] $tables
      */
-    public function chop(string $path, array $tables = [])
+    public function chop(array $tables = [])
     {
         $tables = array_unique($tables);
 
@@ -63,7 +62,7 @@ class Chopper
 
         $progress = new ProgressBar($this->output);
         $progress->start(count($tables));
-        $progress->setMessage("chopping tables in {$schema} from {$path}");
+        $progress->setMessage("chopping tables in {$schema}");
 
         foreach ($tables as $table) {
             $tableChopper->chop($schema, $table);

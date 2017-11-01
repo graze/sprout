@@ -15,6 +15,8 @@ namespace Graze\Sprout\Command;
 
 use Graze\ParallelProcess\Table;
 use Graze\ParallelProcess\Pool;
+use Graze\Sprout\Chop\Chopper;
+use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config;
 use PDO;
 use Symfony\Component\Console\Command\Command;
@@ -66,12 +68,20 @@ class ChopCommand extends Command
         $schemaPath = $config->getSchemaPath($schema);
 
         if (count($tables) === 0) {
-            $excludes = $schemaConfiguration->getExcludes();
-            foreach ($excludes as $exclude) {
-                $wheres[] = "`table_name` NOT REGEXP ?";
-                $binds[] = sprintf('^%s$', $exclude);
+            // find tables from existing dump
+            $files = new \FilesystemIterator($schemaPath);
+            foreach ($files as $file) {
+                if (in_array($file, ['.', '..'])) {
+                    continue;
+                }
+                $tables[] = pathinfo($file, PATHINFO_FILENAME);
             }
         }
+
+        $processTable = new Table($output);
+
+        $seeder = new Chopper($schemaConfiguration, $output, new TableChopperFactory($processTable));
+        $seeder->chop($tables);
 
         return 0;
     }

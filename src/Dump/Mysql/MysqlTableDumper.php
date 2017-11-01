@@ -13,29 +13,28 @@
 
 namespace Graze\Sprout\Dump\Mysql;
 
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\TableDumperInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class MysqlTableDumper implements TableDumperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var OutputInterface */
-    private $output;
+    /** @var Table */
+    private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
+     * @param Table                     $pool
      * @param ConnectionConfigInterface $connection
-     * @param OutputInterface           $output
      */
-    public function __construct(ConnectionConfigInterface $connection, OutputInterface $output)
+    public function __construct(Table $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
-        $this->output = $output;
+        $this->pool = $pool;
     }
 
     /**
@@ -45,8 +44,6 @@ class MysqlTableDumper implements TableDumperInterface
      */
     public function dump(string $schema, string $table, string $file)
     {
-        $this->output->write("dumping {$schema}/{$table} to {$file}... ", OutputInterface::VERBOSITY_DEBUG);
-
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
@@ -62,13 +59,6 @@ class MysqlTableDumper implements TableDumperInterface
             )
         );
 
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            unlink($file);
-            throw new ProcessFailedException($process);
-        }
-
-        $this->output->writeln("<info>done</info>", OutputInterface::VERBOSITY_DEBUG);
+        $this->pool->add($process, ['schema' => $schema, 'table' => $table]);
     }
 }

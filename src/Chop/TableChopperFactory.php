@@ -13,37 +13,50 @@
 
 namespace Graze\Sprout\Chop;
 
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\Mysql\MysqlTableChopper;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class TableChopperFactory
+class TableChopperFactory implements LoggerAwareInterface
 {
-    /** @var OutputInterface */
-    private $output;
+    use LoggerAwareTrait;
+
+    /** @var Table */
+    private $processPool;
 
     /**
      * TableDumperFactory constructor.
      *
-     * @param OutputInterface $output
+     * @param Table $processPool
+     *
+     * @internal param OutputInterface $output
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(Table $processPool)
     {
-        $this->output = $output;
+        $this->processPool = $processPool;
     }
 
+    /**
+     * @param ConnectionConfigInterface $connection
+     *
+     * @return TableChopperInterface
+     */
     public function getChopper(ConnectionConfigInterface $connection): TableChopperInterface
     {
         $driver = $connection->getDriver();
 
         switch ($driver) {
             case 'mysql':
-                $this->output->writeln(
-                    "Using mysql table chopper for driver: {$driver}",
-                    OutputInterface::VERBOSITY_DEBUG
-                );
-                return new MysqlTableChopper($connection, $this->output);
+                if ($this->logger) {
+                    $this->logger->debug(
+                        "getChopper: using mysql chopper for driver: {$driver}",
+                        ['driver' => $driver]
+                    );
+                }
+                return new MysqlTableChopper($this->processPool, $connection);
             default:
                 throw new InvalidArgumentException("getChopper: no chopper found for driver: `{$driver}`");
         }

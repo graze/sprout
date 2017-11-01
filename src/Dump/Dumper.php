@@ -36,11 +36,11 @@ class Dumper
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableDumperFactory $factory = null
+        TableDumperFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableDumperFactory($output);
+        $this->factory = $factory;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of graze/sprout.
- *  
+ *
  * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,11 +13,11 @@
 
 namespace Graze\Sprout\Test\Unit\Chop;
 
-use Graze\Sprout\Config\ConnectionConfigInterface;
-use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Chop\TableChopperInterface;
+use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,11 +54,11 @@ class ChopperTest extends TestCase
 
         foreach ($tables as $table) {
             $tableChopper->shouldReceive('chop')
-                        ->with('schema', $table)
-                        ->once();
+                         ->with('schema', $table)
+                         ->once();
         }
 
-        $chopper->Chop('/some/path/schema', $tables);
+        $chopper->chop($tables);
     }
 
     /**
@@ -97,8 +97,8 @@ class ChopperTest extends TestCase
 
         $tables = ['table1', 'table1'];
         $tableChopper->shouldReceive('chop')
-                    ->with('schema', 'table1')
-                    ->once();
+                     ->with('schema', 'table1')
+                     ->once();
         $chopper->chop($tables);
     }
 
@@ -109,7 +109,7 @@ class ChopperTest extends TestCase
         $config->shouldReceive('getConnection')
                ->andReturn($connConfig);
         $config->shouldReceive('getSchema')
-            ->andReturn('schema');
+               ->andReturn('schema');
 
         $output = Mockery::mock(OutputInterface::class);
         $output->shouldReceive('writeln')->with('<warning>No tables specified, nothing to do</warning>')->once();

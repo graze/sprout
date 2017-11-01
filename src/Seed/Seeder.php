@@ -36,11 +36,11 @@ class Seeder
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableSeederFactory $factory = null
+        TableSeederFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableSeederFactory($output);
+        $this->factory = $factory;
     }
 
     /**

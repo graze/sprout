@@ -13,36 +13,36 @@
 
 namespace Graze\Sprout\Chop\Mysql;
 
-use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\TableChopperInterface;
-use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Graze\Sprout\Config\ConnectionConfigInterface;
 use Symfony\Component\Process\Process;
 
 class MysqlTableChopper implements TableChopperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var OutputInterface */
-    private $output;
+    /** @var Table */
+    private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
+     * @param Table                     $pool
      * @param ConnectionConfigInterface $connection
-     * @param OutputInterface           $output
      */
-    public function __construct(ConnectionConfigInterface $connection, OutputInterface $output)
+    public function __construct(Table $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
-        $this->output = $output;
+        $this->pool = $pool;
     }
 
+    /**
+     * @param string $schema
+     * @param string $table
+     */
     public function chop(string $schema, string $table)
     {
-        $this->output->write("chopping down {$schema}/{$table}... ", OutputInterface::VERBOSITY_DEBUG);
-
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
@@ -54,12 +54,7 @@ class MysqlTableChopper implements TableChopperInterface
                 escapeshellarg(sprintf('TRUNCATE `%s`', $table))
             )
         );
-        $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $this->output->writeln("<info>done</info>", OutputInterface::VERBOSITY_DEBUG);
+        $this->pool->add($process, ['schema' => $schema, 'table' => $table]);
     }
 }

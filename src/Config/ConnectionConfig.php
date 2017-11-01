@@ -67,8 +67,7 @@ class ConnectionConfig implements ConnectionConfigInterface
         return Validate::arr(false)
                        ->required('driver', v::stringType()->in(
                            [ConnectionConfigInterface::DRIVER_MYSQL]
-                       )
-                       )
+                       ))
                        ->required('user', v::stringType())
                        ->required('password', v::stringType())
                        ->required('host', v::stringType())
