@@ -24,28 +24,38 @@ class SchemaConfig implements SchemaConfigInterface
      */
     public function __construct(array $options = [])
     {
-         $options = static::getValidator()->validate($options);
-         $this->schema = $options['schema'];
-         $this->exclude = $options['exclude'];
-         $this->connection = new ConnectionConfig($options['connection']);
+        $options = static::getValidator()->validate($options);
+        $this->schema = $options['schema'];
+        $this->exclude = $options['exclude'];
+        $this->connection = new ConnectionConfig($options['connection']);
     }
 
+    /**
+     * @return string
+     */
     public function getSchema(): string
     {
         return $this->schema;
     }
 
+    /**
+     * @return ConnectionConfigInterface
+     */
     public function getConnection(): ConnectionConfigInterface
     {
         return $this->connection;
     }
 
+    /**
+     * @return ConfigValidatorInterface
+     */
     public static function getValidator(): ConfigValidatorInterface
     {
         return Validate::arr(false)
-                       ->required('connection', v::arrayType()->addRule(
-                           ConnectionConfig::getValidator()->getValidator()
-                       ))
+                       ->required(
+                           'connection',
+                           v::arrayType()->addRule(ConnectionConfig::getValidator()->getValidator())
+                       )
                        ->required('schema', v::stringType())
                        ->optional('exclude', v::arrayVal()->each(v::stringType()), []);
     }

@@ -13,18 +13,16 @@
 
 namespace Graze\Sprout\Command;
 
-use Graze\ParallelProcess\Table;
 use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config;
-use PDO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 class ChopCommand extends Command
 {
@@ -78,7 +76,10 @@ class ChopCommand extends Command
             }
         }
 
-        $processTable = new Table($output);
+        $processTable = new Table(
+            $output,
+            (new Pool())->setMaxSimultaneous($config->get('defaults.simultaneousProcesses'))
+        );
 
         $seeder = new Chopper($schemaConfiguration, $output, new TableChopperFactory($processTable));
         $seeder->chop($tables);

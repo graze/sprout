@@ -25,6 +25,8 @@ use Symfony\Component\Process\Process;
  */
 class MysqlTableSeederTest extends TestCase
 {
+    // our standards don't handle sub functions properly, until this is fixed
+    // @codingStandardsIgnoreStart
     public function testSeed()
     {
         $process = Mockery::mock('overload:' . Process::class);
@@ -64,6 +66,7 @@ class MysqlTableSeederTest extends TestCase
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }
+    // @codingStandardsIgnoreEnd
 
     /**
      * @expectedException \InvalidArgumentException
@@ -75,6 +78,7 @@ class MysqlTableSeederTest extends TestCase
 
         $tableSeeder = new MysqlTableSeeder($pool, $config);
 
+        // @codingStandardsIgnoreStart
         /**
          * @param string $file
          *
@@ -85,6 +89,7 @@ class MysqlTableSeederTest extends TestCase
             TestCase::assertEquals('some-file', $file);
             return false;
         }
+        // @codingStandardsIgnoreEnd
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }

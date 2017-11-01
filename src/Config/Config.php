@@ -29,6 +29,7 @@ class Config
     const DEFAULT_GROUP       = 'core';
     const DEFAULT_PATH        = '/seed';
     const DEFAULT_CONFIG_PATH = '/app/config/config.yml';
+    const DEFAULT_PROCESSES   = 10;
 
     /** @var array */
     private $config;
@@ -36,14 +37,12 @@ class Config
     /** @var ConfigValidatorInterface */
     private $validator;
 
-    /**
-     * Config constructor.
-     */
     public function __construct()
     {
         $this->validator = Validate::arr(false)
                                    ->optional('defaults.group', v::stringType()->alnum('_'), static::DEFAULT_GROUP)
                                    ->optional('defaults.path', v::stringType()->directory(), static::DEFAULT_PATH)
+                                   ->optional('defaults.simultaneousProcesses', v::intVal(), static::DEFAULT_PROCESSES)
                                    ->required(
                                        'schemas',
                                        v::arrayVal()->each(
@@ -109,6 +108,11 @@ class Config
         return $cur;
     }
 
+    /**
+     * @param string $schema
+     *
+     * @return SchemaConfigInterface
+     */
     public function getSchemaConfiguration(string $schema): SchemaConfigInterface
     {
         $value = $this->get("schemas.{$schema}");

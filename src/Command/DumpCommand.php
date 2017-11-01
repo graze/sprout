@@ -14,6 +14,7 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
 use Graze\Sprout\Dump\Dumper;
@@ -64,7 +65,10 @@ class DumpCommand extends Command
         $schemaConfiguration = $config->getSchemaConfiguration($schema);
         $schemaPath = $config->getSchemaPath($schema);
 
-        $processTable = new Table($output);
+        $processTable = new Table(
+            $output,
+            (new Pool())->setMaxSimultaneous($config->get('defaults.simultaneousProcesses'))
+        );
 
         $dumper = new Dumper($schemaConfiguration, $output, new TableDumperFactory($processTable));
         $dumper->dump($schemaPath, $tables);

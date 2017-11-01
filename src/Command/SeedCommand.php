@@ -14,6 +14,7 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
 use Graze\Sprout\Seed\Seeder;
@@ -75,7 +76,10 @@ class SeedCommand extends Command
             }
         }
 
-        $processTable = new Table($output);
+        $processTable = new Table(
+            $output,
+            (new Pool())->setMaxSimultaneous($config->get('defaults.simultaneousProcesses'))
+        );
 
         $seeder = new Seeder($schemaConfiguration, $output, new TableSeederFactory($processTable));
         $seeder->seed($schemaPath, $tables);

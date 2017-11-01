@@ -23,8 +23,8 @@ build-update: ## Update all dependencies
 
 composer-%: ## Run a composer command, `make "composer-<command> [...]"`.
 	${DOCKER} run -t --rm \
-        -v $$(pwd):/app \
-        -v ~/.composer:/tmp \
+        -v $$(pwd):/app:delegated \
+        -v ~/.composer:/tmp:delegated \
         composer --ansi --no-interaction $* $(filter-out $@,$(MAKECMDGOALS))
 
 # Testing

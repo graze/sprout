@@ -31,9 +31,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $SeederFactory = new TableSeederFactory($processTable);
+        $seederFactory = new TableSeederFactory($processTable);
 
-        $tableSeeder = $SeederFactory->getSeeder($config);
+        $tableSeeder = $seederFactory->getSeeder($config);
 
         $this->assertInstanceOf(TableSeederInterface::class, $tableSeeder);
         $this->assertInstanceOf(MysqlTableSeeder::class, $tableSeeder);
@@ -50,8 +50,8 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $SeederFactory = new TableSeederFactory($processTable);
+        $seederFactory = new TableSeederFactory($processTable);
 
-        $SeederFactory->getSeeder($config);
+        $seederFactory->getSeeder($config);
     }
 }

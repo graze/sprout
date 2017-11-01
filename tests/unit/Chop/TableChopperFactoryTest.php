@@ -31,9 +31,9 @@ class TableChopperFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $ChopperFactory = new TableChopperFactory($processTable);
+        $chopperFactory = new TableChopperFactory($processTable);
 
-        $tableChopper = $ChopperFactory->getChopper($config);
+        $tableChopper = $chopperFactory->getChopper($config);
 
         $this->assertInstanceOf(TableChopperInterface::class, $tableChopper);
         $this->assertInstanceOf(MysqlTableChopper::class, $tableChopper);
@@ -50,8 +50,8 @@ class TableChopperFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $ChopperFactory = new TableChopperFactory($processTable);
+        $chopperFactory = new TableChopperFactory($processTable);
 
-        $ChopperFactory->getChopper($config);
+        $chopperFactory->getChopper($config);
     }
 }
