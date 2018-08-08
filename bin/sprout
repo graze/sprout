@@ -2,11 +2,12 @@
 
 <?php
 
+use Graze\Sprout\Command\ChopCommand;
 use Graze\Sprout\Command\DumpCommand;
 use Graze\Sprout\Command\SeedCommand;
 use Symfony\Component\Console\Application;
 
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 mb_internal_encoding("UTF-8");
 mb_http_output("UTF-8");

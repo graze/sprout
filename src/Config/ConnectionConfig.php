@@ -19,9 +19,14 @@ use Respect\Validation\Validator as v;
 
 class ConnectionConfig implements ConnectionConfigInterface
 {
-    /**
-     * @var array
-     */
+    const CONFIG_DRIVER        = 'driver';
+    const CONFIG_HOST          = 'host';
+    const CONFIG_PORT          = 'port';
+    const CONFIG_USER          = 'user';
+    const CONFIG_PASSWORD      = 'password';
+    const CONFIG_DATABASE_NAME = 'dbName';
+
+    /** @var array */
     private $options;
 
     /**
@@ -39,7 +44,7 @@ class ConnectionConfig implements ConnectionConfigInterface
      */
     public function getDriver(): string
     {
-        return $this->options['driver'];
+        return $this->options[static::CONFIG_DRIVER];
     }
 
     /**
@@ -47,7 +52,7 @@ class ConnectionConfig implements ConnectionConfigInterface
      */
     public function getHost(): string
     {
-        return $this->options['host'];
+        return $this->options[static::CONFIG_HOST];
     }
 
     /**
@@ -55,7 +60,7 @@ class ConnectionConfig implements ConnectionConfigInterface
      */
     public function getPort(): int
     {
-        return (int)$this->options['port'];
+        return (int) $this->options[static::CONFIG_PORT];
     }
 
     /**
@@ -63,7 +68,7 @@ class ConnectionConfig implements ConnectionConfigInterface
      */
     public function getUser(): string
     {
-        return $this->options['user'];
+        return $this->options[static::CONFIG_USER];
     }
 
     /**
@@ -71,7 +76,7 @@ class ConnectionConfig implements ConnectionConfigInterface
      */
     public function getPassword(): string
     {
-        return $this->options['password'];
+        return $this->options[static::CONFIG_PASSWORD];
     }
 
     /**
@@ -96,6 +101,6 @@ class ConnectionConfig implements ConnectionConfigInterface
                        ->required('password', v::stringType())
                        ->required('host', v::stringType())
                        ->optional('port', v::intVal(), 3306)
-                       ->required('dbName', v::stringType());
+                       ->optional('dbName', v::stringType());
     }
 }

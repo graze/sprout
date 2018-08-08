@@ -1,4 +1,4 @@
-# sprout
+# Sprout
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/graze/sprout.svg?style=flat-square)](https://packagist.org/packages/graze/sprout)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -6,6 +6,13 @@
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout)
 [![Total Downloads](https://img.shields.io/packagist/dt/graze/sprout.svg?style=flat-square)](https://packagist.org/packages/graze/sprout)
+
+Sprout is a tool to help Dump, Truncate and Seed development data into your databases.
+
+![gif](http://25.media.tumblr.com/3af4d6b7e0d3f81d2c4403b756e48763/tumblr_mzr068rjMy1qkiyi1o1_500.gif)
+
+1. Populates MySQL data
+1. Performs actions in parallel
 
 >You now have a copy of the files in this repository, in a new git repository with no previous history that can you manipulate and push to other remote repositories.
 >
@@ -52,14 +59,44 @@ composer require graze/sprout
 
 ## Usage
 
-```php
-$skeleton = new Graze\Sprout\Skeleton('big', 'small', 'dog');
-echo $skeleton->sing();
+### Initial Start
+
+```bash
+~$ # Dump all tables you are interested in
+~$ sprout dump --config=config/sprout.yml a_schema table_1 table_2 ...
+
+~$ # Store the 
 ```
 
-## Change log
+### Seeding
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+```bash
+`$ sprout seed [--config=<path>] [--chop] <schema> [<table>]...
+
+~$ sprout seed --config=config/sprout.yml the_schema
+~$ sprout seed --config=config/sprout.yml --chop the_schema
+
+~$ sprout seed --config=config/sprout.yml the_schema country
+~$ sprout seed --config=config/sprout.yml --chop the_schema country
+```
+
+### Truncating the data from all the tables in a schema
+
+```bash
+~$ sprout chop [--config=<path>] <schema> [<table>]...
+
+~$ sprout chop --config=config/sprout.yml the_schema
+~$ sprout chop --config=config/sprout.yml the_schema country
+```
+
+### Dumping the data from all tables in a schema
+
+```bash
+~$ sprout dump [--config=<path>] <schema> [<table>]...
+
+~$ sprout dump --config=config/sprout.yml the_schema
+~$ sprout dump --config=config/sprout.yml the_schema country
+```
 
 ## Testing
 

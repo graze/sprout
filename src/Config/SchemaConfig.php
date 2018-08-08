@@ -8,6 +8,10 @@ use Respect\Validation\Validator as v;
 
 class SchemaConfig implements SchemaConfigInterface
 {
+    const CONFIG_SCHEMA     = 'schema';
+    const CONFIG_EXCLUDE    = 'exclude';
+    const CONFIG_CONNECTION = 'connection';
+
     /** @var string */
     private $schema;
     /** @var string[] */
@@ -25,9 +29,9 @@ class SchemaConfig implements SchemaConfigInterface
     public function __construct(array $options = [])
     {
         $options = static::getValidator()->validate($options);
-        $this->schema = $options['schema'];
-        $this->exclude = $options['exclude'];
-        $this->connection = new ConnectionConfig($options['connection']);
+        $this->schema = $options[static::CONFIG_SCHEMA];
+        $this->exclude = $options[static::CONFIG_EXCLUDE];
+        $this->connection = new ConnectionConfig($options[static::CONFIG_CONNECTION]);
     }
 
     /**
@@ -52,12 +56,9 @@ class SchemaConfig implements SchemaConfigInterface
     public static function getValidator(): ConfigValidatorInterface
     {
         return Validate::arr(false)
-                       ->required(
-                           'connection',
-                           v::arrayType()->addRule(ConnectionConfig::getValidator()->getValidator())
-                       )
-                       ->required('schema', v::stringType())
-                       ->optional('exclude', v::arrayVal()->each(v::stringType()), []);
+                       ->addChild(static::CONFIG_CONNECTION, ConnectionConfig::getValidator())
+                       ->optional(static::CONFIG_SCHEMA, v::stringType())
+                       ->optional(static::CONFIG_EXCLUDE, v::arrayVal()->each(v::stringType()), []);
     }
 
     /**

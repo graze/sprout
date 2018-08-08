@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  sprout:
+    image: graze/sprout
+    build: ../
+    depends_on:
+      - db
+    volumes:
+      - ../:/app:delegated
+    working_dir: /app/example
+
+  morphism:
+    image: graze/morphism
+    depends_on:
+      - db
+    volumes:
+      - ./schema:/schema
+      - ./config:/config
+
+  db:
+    image: mysql:5
+    environment:
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: the_schema
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - ./config/mysql.cnf:/etc/mysql/my.cnf
+
+  netcat:
+    image: gophernet/netcat
+    depends_on:
+      - db
+    entrypoint:
+      - /bin/sh
+    command: ./wait-for-db.sh db 3306
+    volumes:
+      - ../bin:/srv/bin
+    working_dir: /srv/bin

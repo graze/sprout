@@ -61,15 +61,9 @@ class Dumper
         $tableDumper = $this->factory->getDumper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        $progress = new ProgressBar($this->output);
-        $progress->start(count($tables));
-        $progress->setMessage("dumping tables in {$schema} to {$path}");
-
         foreach ($tables as $table) {
             $file = sprintf('%s/%s.sql', $path, $table);
             $tableDumper->dump($schema, $table, $file);
-            $progress->advance();
         }
-        $progress->finish();
     }
 }

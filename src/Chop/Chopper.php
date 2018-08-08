@@ -60,14 +60,8 @@ class Chopper
         $tableChopper = $this->factory->getChopper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        $progress = new ProgressBar($this->output);
-        $progress->start(count($tables));
-        $progress->setMessage("chopping tables in {$schema}");
-
         foreach ($tables as $table) {
             $tableChopper->chop($schema, $table);
-            $progress->advance();
         }
-        $progress->finish();
     }
 }

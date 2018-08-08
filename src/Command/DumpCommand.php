@@ -40,10 +40,17 @@ class DumpCommand extends Command
             Config::DEFAULT_CONFIG_PATH
         );
 
+        $this->addOption(
+            'group',
+            'g',
+            InputOption::VALUE_OPTIONAL,
+            'The group to use'
+        );
+
         $this->addArgument('schema', InputArgument::REQUIRED, 'The schema configuration to use');
         $this->addArgument(
             'table',
-            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+            InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
             'The tables to dump'
         );
     }
@@ -62,16 +69,45 @@ class DumpCommand extends Command
 
         $config = (new Config())->parse($input->getOption('config'));
 
+        $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
+
         $schemaConfiguration = $config->getSchemaConfiguration($schema);
         $schemaPath = $config->getSchemaPath($schema);
 
-        $processTable = new Table(
-            $output,
-            (new Pool())->setMaxSimultaneous($config->get('defaults.simultaneousProcesses'))
-        );
+        if (count($tables) === 0) {
+            // find tables from existing dump
+            $files = new \FilesystemIterator($schemaPath);
+            foreach ($files as $file) {
+                if (in_array($file, ['.', '..'])) {
+                    continue;
+                }
+                $file = pathinfo($file, PATHINFO_FILENAME);
+                if (empty($file)) {
+                    continue;
+                }
+                $tables[] = pathinfo($file, PATHINFO_FILENAME);
+            }
+        }
 
-        $dumper = new Dumper($schemaConfiguration, $output, new TableDumperFactory($processTable));
+        $pool = new Pool();
+        $pool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
+
+        $output->writeln(sprintf(
+            'Dumping <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+            count($tables),
+            $schema,
+            $group
+        ));
+
+        $dumper = new Dumper($schemaConfiguration, $output, new TableDumperFactory($pool));
         $dumper->dump($schemaPath, $tables);
+
+        $processTable = new Table($output, $pool);
+        $processTable->setShowSummary(true);
+
+        if (!$processTable->run(0.1)) {
+            return 1;
+        }
 
         return 0;
     }

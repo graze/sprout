@@ -13,7 +13,7 @@
 
 namespace Graze\Sprout\Dump\Mysql;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\TableDumperInterface;
 use Symfony\Component\Process\Process;
@@ -22,16 +22,16 @@ class MysqlTableDumper implements TableDumperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var Table */
+    /** @var Pool */
     private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
-     * @param Table                     $pool
+     * @param Pool                      $pool
      * @param ConnectionConfigInterface $connection
      */
-    public function __construct(Table $pool, ConnectionConfigInterface $connection)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
         $this->pool = $pool;
@@ -48,7 +48,7 @@ class MysqlTableDumper implements TableDumperInterface
         $process->setCommandLine(
             sprintf(
                 'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info' .
-                ' --extended-insert --hex-dump --quick %4$s %5$s' .
+                ' --extended-insert --quick --complete-insert %4$s %5$s' .
                 '| sed \'s$VALUES ($VALUES\n($g\' | sed \'s$),($),\n($g\' > %6$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
@@ -59,6 +59,6 @@ class MysqlTableDumper implements TableDumperInterface
             )
         );
 
-        $this->pool->add($process, ['schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['action' => 'dump', 'schema' => $schema, 'table' => $table]);
     }
 }

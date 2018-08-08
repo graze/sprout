@@ -13,7 +13,7 @@
 
 namespace Graze\Sprout\Chop;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Chop\Mysql\MysqlTableChopper;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use InvalidArgumentException;
@@ -24,17 +24,17 @@ class TableChopperFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var Table */
+    /** @var Pool */
     private $processPool;
 
     /**
      * TableDumperFactory constructor.
      *
-     * @param Table $processPool
+     * @param Pool $processPool
      *
      * @internal param OutputInterface $output
      */
-    public function __construct(Table $processPool)
+    public function __construct(Pool $processPool)
     {
         $this->processPool = $processPool;
     }

@@ -13,6 +13,7 @@
 
 namespace Graze\Sprout\Seed\Mysql;
 
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Seed\TableSeederInterface;
@@ -23,16 +24,16 @@ class MysqlTableSeeder implements TableSeederInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var Table */
+    /** @var Pool */
     private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
-     * @param Table                     $pool
+     * @param Pool                     $pool
      * @param ConnectionConfigInterface $connection
      */
-    public function __construct(Table $pool, ConnectionConfigInterface $connection)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
         $this->pool = $pool;
         $this->connection = $connection;
@@ -61,6 +62,6 @@ class MysqlTableSeeder implements TableSeederInterface
             )
         );
 
-        $this->pool->add($process, ['schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['action' => 'seed', 'schema' => $schema, 'table' => $table]);
     }
 }

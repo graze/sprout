@@ -2,6 +2,7 @@
 
 namespace Graze\Sprout\Dump;
 
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\Mysql\MysqlTableDumper;
@@ -13,15 +14,15 @@ class TableDumperFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var Table */
+    /** @var Pool */
     private $processPool;
 
     /**
      * TableDumperFactory constructor.
      *
-     * @param Table $processPool
+     * @param Pool $processPool
      */
-    public function __construct(Table $processPool)
+    public function __construct(Pool $processPool)
     {
         $this->processPool = $processPool;
     }

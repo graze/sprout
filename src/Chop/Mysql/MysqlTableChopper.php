@@ -13,6 +13,7 @@
 
 namespace Graze\Sprout\Chop\Mysql;
 
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\TableChopperInterface;
 use Graze\Sprout\Config\ConnectionConfigInterface;
@@ -28,10 +29,10 @@ class MysqlTableChopper implements TableChopperInterface
     /**
      * MysqlTableDumper constructor.
      *
-     * @param Table                     $pool
+     * @param Pool                      $pool
      * @param ConnectionConfigInterface $connection
      */
-    public function __construct(Table $pool, ConnectionConfigInterface $connection)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
         $this->pool = $pool;
@@ -46,7 +47,7 @@ class MysqlTableChopper implements TableChopperInterface
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
-                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 %4$s < %5$s',
+                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 --execute=%5$s %4$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),
@@ -55,6 +56,6 @@ class MysqlTableChopper implements TableChopperInterface
             )
         );
 
-        $this->pool->add($process, ['schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['chop', 'schema' => $schema, 'table' => $table]);
     }
 }

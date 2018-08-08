@@ -30,7 +30,7 @@ class MysqlTableChopperTest extends TestCase
         $process = Mockery::mock('overload:' . Process::class);
 
         $process->shouldReceive('setCommandLine')
-                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 \'some-schema\' < \'TRUNCATE `some-table`\'')
+                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'TRUNCATE `some-table`\' \'some-schema\'')
                 ->once();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);

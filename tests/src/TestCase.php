@@ -14,6 +14,9 @@
 
 namespace Graze\Sprout\Test;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
+class TestCase extends \PHPUnit\Framework\TestCase
 {
+    use MockeryPHPUnitIntegration;
 }
