@@ -17,9 +17,10 @@ use Exception;
 use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
+use Graze\Sprout\Parser\ParsedSchema;
+use Graze\Sprout\Parser\SchemaParser;
 use Graze\Sprout\Seed\Seeder;
 use Graze\Sprout\Seed\TableSeederFactory;
-use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -29,11 +30,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SeedCommand extends Command
 {
-    const OPTION_CONFIG   = 'config';
-    const OPTION_CHOP     = 'chop';
-    const OPTION_GROUP    = 'group';
-    const ARGUMENT_SCHEMA = 'schema';
-    const ARGUMENT_TABLE  = 'table';
+    const OPTION_CONFIG          = 'config';
+    const OPTION_CHOP            = 'chop';
+    const OPTION_GROUP           = 'group';
+    const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
 
     protected function configure()
     {
@@ -63,14 +63,9 @@ class SeedCommand extends Command
         );
 
         $this->addArgument(
-            static::ARGUMENT_SCHEMA,
-            InputArgument::OPTIONAL,
-            'The schema configuration to use, if none is supplied, all schemas are run'
-        );
-        $this->addArgument(
-            static::ARGUMENT_TABLE,
+            static::ARGUMENT_SCHEMA_TABLES,
             InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
-            'The tables to seed, if not specified. Seed all tables that there is a file for'
+            'Collection of schema and tables to use, examples: schema1 schema2 | schema1:* schema2:table1,table2'
         );
     }
 
@@ -83,21 +78,17 @@ class SeedCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schema = $input->getArgument(static::ARGUMENT_SCHEMA);
-        $tables = $input->getArgument(static::ARGUMENT_TABLE);
-
-        $config = (new Config())->parse($input->getOption(static::OPTION_CONFIG));
-
-        $group = $input->getOption(static::OPTION_GROUP) ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
+        $schemas = $input->getArgument(static::ARGUMENT_SCHEMA_TABLES);
+        $config = (new Config())->parse($input->getOption('config'));
+        $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
         if ($input->getOption(static::OPTION_CHOP)) {
             $chopCommand = new ChopCommand();
             $exitCode = $chopCommand->run(
                 new ArrayInput([
-                    static::ARGUMENT_SCHEMA      => $schema,
-                    static::ARGUMENT_TABLE       => $tables,
-                    '--' . static::OPTION_CONFIG => $input->getOption(static::OPTION_CONFIG),
-                    '--' . static::OPTION_GROUP  => $group,
+                    static::ARGUMENT_SCHEMA_TABLES => $schemas,
+                    '--' . static::OPTION_CONFIG   => $input->getOption(static::OPTION_CONFIG),
+                    '--' . static::OPTION_GROUP    => $group,
                 ]),
                 $output
             );
@@ -106,84 +97,43 @@ class SeedCommand extends Command
             }
         }
 
+        $schemaParser = new SchemaParser($config, $group);
+        $parsedSchemas = $schemaParser->extractSchemas($schemas);
+
+        $numTables = array_sum(array_map(
+            function (ParsedSchema $schema) {
+                return count($schema->getTables());
+            },
+            $parsedSchemas
+        ));
+
+        $useGlobal = $numTables <= 10;
+
         $globalPool = new Pool();
+        $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
-        $seedSchema = function (
-            string $schema,
-            array $tables = []
-        ) use (
-            $input,
-            $output,
-            $config,
-            $group,
-            $globalPool
-        ) {
-            $schemaConfiguration = $config->getSchemaConfiguration($schema);
-            $schemaPath = $config->getSchemaPath($schema, $group);
-
-            if (count($tables) === 0) {
-                // find tables from existing dump
-                $files = iterator_to_array(new \FilesystemIterator($schemaPath));
-                $files = array_values(array_filter(
-                    $files,
-                    function (SplFileInfo $file) {
-                        return (!in_array($file->getFilename(), ['.', '..'])
-                                && pathinfo($file, PATHINFO_FILENAME) !== '');
-                    }
-                ));
-
-                // sort by file size
-                usort(
-                    $files,
-                    function (SplFileInfo $a, SplFileInfo $b) {
-                        $left = $a->getSize();
-                        $right = $b->getSize();
-                        return ($left == $right)
-                            ? 0
-                            : (($left > $right) ?
-                                -1 : 1);
-                    }
-                );
-                $tables = array_map(
-                    function (SplFileInfo $file) {
-                        return pathinfo($file, PATHINFO_FILENAME);
-                    },
-                    $files
-                );
-            }
-
+        foreach ($parsedSchemas as $schema) {
             $output->writeln(sprintf(
-                'Seeding <info>%d</info> tables in <info>%s</info> schema for group <info>%s</info>',
-                count($tables),
-                $schema,
+                'Seeding <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+                count($schema->getTables()),
+                $schema->getSchameName(),
                 $group
             ));
 
-            $pool = new Pool(
-                [],
-                $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
-                false,
-                ['seed', 'schema' => $schema]
-            );
-
-            $seeder = new Seeder($schemaConfiguration, $output, new TableSeederFactory($pool));
-            $seeder->seed($schemaPath, $tables);
-
-            $globalPool->add($pool);
-        };
-
-        if (is_null($schema)) {
-            $files = new \FilesystemIterator($config->getGroupPath($group));
-            foreach ($files as $file) {
-                if (in_array($file, ['.', '..'])) {
-                    continue;
-                }
-                if (is_dir($file)) {
-                    $seedSchema(pathinfo($file, PATHINFO_BASENAME));
-                }
+            if ($useGlobal) {
+                $pool = $globalPool;
+            } else {
+                $pool = new Pool(
+                    [],
+                    $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
+                    false,
+                    ['seed', 'schema' => $schema->getSchameName()]
+                );
+                $globalPool->add($pool);
             }
-        } else {
-            $seedSchema($schema, $tables);
+
+            $seeder = new Seeder($schema->getSchemaConfig(), $output, new TableSeederFactory($pool));
+            $seeder->seed($schema->getPath(), $schema->getTables());
         }
 
         $processTable = new Table($output, $globalPool);

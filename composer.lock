@@ -175,12 +175,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/graze/parallel-process.git",
-                "reference": "294a61bc9c042b8486f6939439d940994b47bdba"
+                "reference": "47373a2692f0b42dfafbfec96078e7d840b76c91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/graze/parallel-process/zipball/294a61bc9c042b8486f6939439d940994b47bdba",
-                "reference": "294a61bc9c042b8486f6939439d940994b47bdba",
+                "url": "https://api.github.com/repos/graze/parallel-process/zipball/47373a2692f0b42dfafbfec96078e7d840b76c91",
+                "reference": "47373a2692f0b42dfafbfec96078e7d840b76c91",
                 "shasum": ""
             },
             "require": {
@@ -229,7 +229,7 @@
                 "graze",
                 "parallel-process"
             ],
-            "time": "2018-08-07T16:12:05+00:00"
+            "time": "2018-08-08T11:55:36+00:00"
         },
         {
             "name": "graze/sort",

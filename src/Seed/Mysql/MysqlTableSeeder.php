@@ -62,6 +62,6 @@ class MysqlTableSeeder implements TableSeederInterface
             )
         );
 
-        $this->pool->add($process, ['action' => 'seed', 'schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['seed', 'schema' => $schema, 'table' => $table]);
     }
 }

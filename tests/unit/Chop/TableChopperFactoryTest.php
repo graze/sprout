@@ -13,7 +13,7 @@
 
 namespace Graze\Sprout\Test\Unit\Chop;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Chop\Mysql\MysqlTableChopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Chop\TableChopperInterface;
@@ -25,7 +25,7 @@ class TableChopperFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableChopper()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
@@ -44,7 +44,7 @@ class TableChopperFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')

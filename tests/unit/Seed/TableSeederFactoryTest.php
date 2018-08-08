@@ -13,7 +13,7 @@
 
 namespace Graze\Sprout\Test\Unit\Seed;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Seed\Mysql\MysqlTableSeeder;
 use Graze\Sprout\Seed\TableSeederFactory;
@@ -25,7 +25,7 @@ class TableSeederFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableSeeder()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
@@ -44,7 +44,7 @@ class TableSeederFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')

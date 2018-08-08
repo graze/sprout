@@ -62,7 +62,7 @@ class Config
                         )
                     )
                     ->required(
-                        'schemas',
+                        static::CONFIG_SCHEMAS,
                         v::arrayVal()->length(1, null)->each(
                             SchemaConfig::getValidator()
                                         ->getValidator()
@@ -152,15 +152,15 @@ class Config
     /**
      * Get the path for a specific schema
      *
-     * @param string      $schema The schema configuration to get
-     * @param string|null $group  The group. If none supplied, uses the default
+     * @param SchemaConfigInterface $schema The schema configuration
+     * @param string|null           $group  The group. If none supplied, uses the default
      *
      * @return string
      */
-    public function getSchemaPath(string $schema, string $group = null): string
+    public function getSchemaPath(SchemaConfigInterface $schema, string $group = null): string
     {
         $group = $group ?: $this->get("defaults.group");
-        return sprintf('%s/%s/', $this->getGroupPath($group), $schema);
+        return sprintf('%s/%s/', $this->getGroupPath($group), $schema->getDirName());
     }
 
     /**

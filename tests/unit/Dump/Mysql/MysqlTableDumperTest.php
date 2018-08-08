@@ -2,7 +2,7 @@
 
 namespace Graze\Sprout\Dump\Mysql;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
@@ -21,7 +21,7 @@ class MysqlTableDumperTest extends TestCase
         $process->shouldReceive('setCommandLine')
                 ->with(
                     'mysqldump -h\'some-host\' -u\'some-user\' -p\'some-pass\' --compress --compact --no-create-info' .
-                    ' --extended-insert --hex-dump --quick \'some-schema\' \'some-table\'' .
+                    ' --extended-insert --quick --complete-insert \'some-schema\' \'some-table\'' .
                     '| sed \'s$VALUES ($VALUES\n($g\' | sed \'s$),($),\n($g\' > \'some-file\''
                 )
                 ->once();
@@ -34,12 +34,12 @@ class MysqlTableDumperTest extends TestCase
         $config->shouldReceive('getPassword')
                ->andReturn('some-pass');
 
-        $pool = Mockery::mock(Table::class);
+        $pool = Mockery::mock(Pool::class);
 
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['schema' => 'some-schema', 'table' => 'some-table']
+                 ['dump', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
         $tableDumper = new MysqlTableDumper($pool, $config);

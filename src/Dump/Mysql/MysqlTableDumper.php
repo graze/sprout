@@ -59,6 +59,6 @@ class MysqlTableDumper implements TableDumperInterface
             )
         );
 
-        $this->pool->add($process, ['action' => 'dump', 'schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['dump', 'schema' => $schema, 'table' => $table]);
     }
 }

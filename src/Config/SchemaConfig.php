@@ -11,6 +11,7 @@ class SchemaConfig implements SchemaConfigInterface
     const CONFIG_SCHEMA     = 'schema';
     const CONFIG_EXCLUDE    = 'exclude';
     const CONFIG_CONNECTION = 'connection';
+    const CONFIG_DIR_NAME   = 'dirName';
 
     /** @var string */
     private $schema;
@@ -18,6 +19,8 @@ class SchemaConfig implements SchemaConfigInterface
     private $exclude;
     /** @var ConnectionConfigInterface */
     private $connection;
+    /** @var string */
+    private $dirName;
 
     /**
      * SchemaConfig constructor.
@@ -32,6 +35,7 @@ class SchemaConfig implements SchemaConfigInterface
         $this->schema = $options[static::CONFIG_SCHEMA];
         $this->exclude = $options[static::CONFIG_EXCLUDE];
         $this->connection = new ConnectionConfig($options[static::CONFIG_CONNECTION]);
+        $this->dirName = $options[static::CONFIG_DIR_NAME] ?? $this->schema;
     }
 
     /**
@@ -58,7 +62,8 @@ class SchemaConfig implements SchemaConfigInterface
         return Validate::arr(false)
                        ->addChild(static::CONFIG_CONNECTION, ConnectionConfig::getValidator())
                        ->optional(static::CONFIG_SCHEMA, v::stringType())
-                       ->optional(static::CONFIG_EXCLUDE, v::arrayVal()->each(v::stringType()), []);
+                       ->optional(static::CONFIG_EXCLUDE, v::arrayVal()->each(v::stringType()), [])
+                       ->optional(static::CONFIG_DIR_NAME, v::stringType());
     }
 
     /**
@@ -67,5 +72,13 @@ class SchemaConfig implements SchemaConfigInterface
     public function getExcludes(): array
     {
         return $this->exclude;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDirName(): string
+    {
+        return $this->dirName;
     }
 }

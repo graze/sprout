@@ -13,6 +13,7 @@
 
 namespace Graze\Sprout\Seed\Mysql;
 
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Test\TestCase;
@@ -43,12 +44,12 @@ class MysqlTableSeederTest extends TestCase
         $config->shouldReceive('getPassword')
                ->andReturn('some-pass');
 
-        $pool = Mockery::mock(Table::class);
+        $pool = Mockery::mock(Pool::class);
 
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['schema' => 'some-schema', 'table' => 'some-table']
+                 ['seed', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
         $tableSeeder = new MysqlTableSeeder($pool, $config);
@@ -74,7 +75,7 @@ class MysqlTableSeederTest extends TestCase
     public function testFileExistsFailure()
     {
         $config = Mockery::mock(ConnectionConfigInterface::class);
-        $pool = Mockery::mock(Table::class);
+        $pool = Mockery::mock(Pool::class);
 
         $tableSeeder = new MysqlTableSeeder($pool, $config);
 
@@ -89,6 +90,7 @@ class MysqlTableSeederTest extends TestCase
             TestCase::assertEquals('some-file', $file);
             return false;
         }
+
         // @codingStandardsIgnoreEnd
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');

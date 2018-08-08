@@ -18,6 +18,8 @@ use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config;
+use Graze\Sprout\Parser\ParsedSchema;
+use Graze\Sprout\Parser\SchemaParser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +28,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ChopCommand extends Command
 {
+    const OPTION_GROUP  = 'group';
+    const OPTION_CONFIG = 'config';
+
+    const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
+
     protected function configure()
     {
         $this->setName('chop');
@@ -33,7 +40,7 @@ class ChopCommand extends Command
         $this->setDescription('Chop down (truncate) all the tables');
 
         $this->addOption(
-            'config',
+            static::OPTION_CONFIG,
             'c',
             InputOption::VALUE_OPTIONAL,
             'The configuration file to use',
@@ -41,17 +48,16 @@ class ChopCommand extends Command
         );
 
         $this->addOption(
-            'group',
+            static::OPTION_GROUP,
             'g',
             InputOption::VALUE_OPTIONAL,
             'The group to truncate'
         );
 
-        $this->addArgument('schema', InputArgument::OPTIONAL, 'The schema configuration to use');
         $this->addArgument(
-            'table',
+            static::ARGUMENT_SCHEMA_TABLES,
             InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
-            'The tables to truncate, if not specified. Truncate will empty all the tables in a schema (not in an exclude regex)'
+            'Collection of schema and tables to use, examples: schema1 schema2 | schema1:* schema2:table1,table2'
         );
     }
 
@@ -64,67 +70,47 @@ class ChopCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schema = $input->getArgument('schema');
-        $tables = $input->getArgument('table');
-
+        $schemas = $input->getArgument(static::ARGUMENT_SCHEMA_TABLES);
         $config = (new Config())->parse($input->getOption('config'));
-
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
+
+        $schemaParser = new SchemaParser($config, $group);
+        $parsedSchemas = $schemaParser->extractSchemas($schemas);
+
+        $numTables = array_sum(array_map(
+            function (ParsedSchema $schema) {
+                return count($schema->getTables());
+            },
+            $parsedSchemas
+        ));
+
+        $useGlobal = $numTables <= 10;
 
         $globalPool = new Pool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
-        $chopSchema = function ($schema, array $tables = []) use ($output, $config, $group, $globalPool) {
-            $schemaConfiguration = $config->getSchemaConfiguration($schema);
-            $schemaPath = $config->getSchemaPath($schema, $group);
-
-            if (count($tables) === 0) {
-                // find tables from existing dump
-                $files = new \FilesystemIterator($schemaPath);
-                foreach ($files as $file) {
-                    if (in_array($file, ['.', '..'])) {
-                        continue;
-                    }
-                    $file = pathinfo($file, PATHINFO_FILENAME);
-                    if (empty($file)) {
-                        continue;
-                    }
-                    $tables[] = pathinfo($file, PATHINFO_FILENAME);
-                }
-            }
-
+        foreach ($parsedSchemas as $schema) {
             $output->writeln(sprintf(
                 'Chopping down <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
-                count($tables),
-                $schema,
+                count($schema->getTables()),
+                $schema->getSchameName(),
                 $group
             ));
 
-            $pool = new Pool(
-                [],
-                $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
-                false,
-                ['chop', 'schema' => $schema]
-            );
-
-            $chopper = new Chopper($schemaConfiguration, $output, new TableChopperFactory($pool));
-            $chopper->chop($tables);
-
-            $globalPool->add($pool);
-        };
-
-        if ($schema === null) {
-            $files = new \FilesystemIterator($config->getGroupPath($group));
-            foreach ($files as $file) {
-                if (in_array($file, ['.', '..'])) {
-                    continue;
-                }
-                if (is_dir($file)) {
-                    $chopSchema(pathinfo($file, PATHINFO_BASENAME));
-                }
+            if ($useGlobal) {
+                $pool = $globalPool;
+            } else {
+                $pool = new Pool(
+                    [],
+                    $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
+                    false,
+                    ['chop', 'schema' => $schema->getSchameName()]
+                );
+                $globalPool->add($pool);
             }
-        } else {
-            $chopSchema($schema, $tables);
+
+            $chopper = new Chopper($schema->getSchemaConfig(), $output, new TableChopperFactory($pool));
+            $chopper->chop($schema->getTables());
         }
 
         $processTable = new Table($output, $globalPool);

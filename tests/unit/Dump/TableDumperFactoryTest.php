@@ -2,6 +2,7 @@
 
 namespace Graze\Sprout\Test\Unit\Dump;
 
+use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\Mysql\MysqlTableDumper;
@@ -14,7 +15,7 @@ class TableDumperFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableDumper()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
@@ -33,7 +34,7 @@ class TableDumperFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $processTable = Mockery::mock(Table::class);
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')

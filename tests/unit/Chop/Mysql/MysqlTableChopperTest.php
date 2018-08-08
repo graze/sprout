@@ -13,7 +13,7 @@
 
 namespace Graze\Sprout\Chop\Mysql;
 
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
@@ -41,12 +41,12 @@ class MysqlTableChopperTest extends TestCase
         $config->shouldReceive('getPassword')
                ->andReturn('some-pass');
 
-        $pool = Mockery::mock(Table::class);
+        $pool = Mockery::mock(Pool::class);
 
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['schema' => 'some-schema', 'table' => 'some-table']
+                 ['chop', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
         $tableChopper = new MysqlTableChopper($pool, $config);
