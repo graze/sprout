@@ -6,6 +6,8 @@
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout)
 [![Total Downloads](https://img.shields.io/packagist/dt/graze/sprout.svg?style=flat-square)](https://packagist.org/packages/graze/sprout)
+[![PHP Version](https://img.shields.io/packagist/php-v/graze/sprout.svg?style=flat-square)](https://php.net)
+[![Docker Image Size](https://img.shields.io/microbadger/image-size/graze/sprout.svg?style=flat-square)](https://hub.docker.com/r/graze/sprout/)
 
 Sprout is a tool to help Dump, Truncate and Seed development data into your databases.
 
