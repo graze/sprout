@@ -14,7 +14,7 @@
 namespace Graze\Sprout\Dump;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
+use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Dumper
@@ -36,11 +36,11 @@ class Dumper
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableDumperFactory $factory = null
+        TableDumperFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableDumperFactory($output);
+        $this->factory = $factory;
     }
 
     /**
@@ -61,15 +61,9 @@ class Dumper
         $tableDumper = $this->factory->getDumper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        $progress = new ProgressBar($this->output);
-        $progress->start(count($tables));
-        $progress->setMessage("dumping tables in {$schema} to {$path}");
-
         foreach ($tables as $table) {
             $file = sprintf('%s/%s.sql', $path, $table);
             $tableDumper->dump($schema, $table, $file);
-            $progress->advance();
         }
-        $progress->finish();
     }
 }

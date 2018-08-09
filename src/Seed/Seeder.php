@@ -36,11 +36,11 @@ class Seeder
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableSeederFactory $factory = null
+        TableSeederFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableSeederFactory($output);
+        $this->factory = $factory;
     }
 
     /**
@@ -61,15 +61,9 @@ class Seeder
         $tableSeeder = $this->factory->getSeeder($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        $progress = new ProgressBar($this->output);
-        $progress->start(count($tables));
-        $progress->setMessage("seeding tables in {$schema} from {$path}");
-
         foreach ($tables as $table) {
             $file = sprintf('%s/%s.sql', $path, $table);
             $tableSeeder->seed($file, $schema, $table);
-            $progress->advance();
         }
-        $progress->finish();
     }
 }

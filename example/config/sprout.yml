@@ -1,0 +1,13 @@
+defaults:
+  group: core
+  path: ./data
+schemas:
+  the_schema:
+    connection:
+      user: 'dev'
+      password: 'password'
+      driver: 'mysql'
+      dbName: 'the_schema'
+      host: 'db'
+      port: 3306
+    schema: the_schema

@@ -13,29 +13,28 @@
 
 namespace Graze\Sprout\Dump\Mysql;
 
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\TableDumperInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class MysqlTableDumper implements TableDumperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var OutputInterface */
-    private $output;
+    /** @var Pool */
+    private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
+     * @param Pool                      $pool
      * @param ConnectionConfigInterface $connection
-     * @param OutputInterface           $output
      */
-    public function __construct(ConnectionConfigInterface $connection, OutputInterface $output)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
-        $this->output = $output;
+        $this->pool = $pool;
     }
 
     /**
@@ -45,13 +44,11 @@ class MysqlTableDumper implements TableDumperInterface
      */
     public function dump(string $schema, string $table, string $file)
     {
-        $this->output->write("dumping {$schema}/{$table} to {$file}... ", OutputInterface::VERBOSITY_DEBUG);
-
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
                 'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info' .
-                ' --extended-insert --hex-dump --quick %4$s %5$s' .
+                ' --extended-insert --quick --complete-insert %4$s %5$s' .
                 '| sed \'s$VALUES ($VALUES\n($g\' | sed \'s$),($),\n($g\' > %6$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
@@ -62,13 +59,6 @@ class MysqlTableDumper implements TableDumperInterface
             )
         );
 
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            unlink($file);
-            throw new ProcessFailedException($process);
-        }
-
-        $this->output->writeln("<info>done</info>", OutputInterface::VERBOSITY_DEBUG);
+        $this->pool->add($process, ['dump', 'schema' => $schema, 'table' => $table]);
     }
 }

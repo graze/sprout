@@ -13,36 +13,39 @@
 
 namespace Graze\Sprout\Seed\Mysql;
 
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Seed\TableSeederInterface;
 use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class MysqlTableSeeder implements TableSeederInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var OutputInterface */
-    private $output;
+    /** @var Pool */
+    private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
+     * @param Pool                     $pool
      * @param ConnectionConfigInterface $connection
-     * @param OutputInterface           $output
      */
-    public function __construct(ConnectionConfigInterface $connection, OutputInterface $output)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
+        $this->pool = $pool;
         $this->connection = $connection;
-        $this->output = $output;
     }
 
+    /**
+     * @param string $file
+     * @param string $schema
+     * @param string $table
+     */
     public function seed(string $file, string $schema, string $table)
     {
-        $this->output->write("seeding {$file} to {$schema}/{$table}... ", OutputInterface::VERBOSITY_DEBUG);
-
         if (!file_exists($file)) {
             throw new InvalidArgumentException("seed: The file: {$file} does not exist");
         }
@@ -58,12 +61,7 @@ class MysqlTableSeeder implements TableSeederInterface
                 escapeshellarg($file)
             )
         );
-        $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $this->output->writeln("<info>done</info>", OutputInterface::VERBOSITY_DEBUG);
+        $this->pool->add($process, ['seed', 'schema' => $schema, 'table' => $table]);
     }
 }

@@ -13,40 +13,41 @@
 
 namespace Graze\Sprout\Chop\Mysql;
 
-use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\TableChopperInterface;
-use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use Graze\Sprout\Config\ConnectionConfigInterface;
 use Symfony\Component\Process\Process;
 
 class MysqlTableChopper implements TableChopperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var OutputInterface */
-    private $output;
+    /** @var Pool */
+    private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
+     * @param Pool                      $pool
      * @param ConnectionConfigInterface $connection
-     * @param OutputInterface           $output
      */
-    public function __construct(ConnectionConfigInterface $connection, OutputInterface $output)
+    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
     {
         $this->connection = $connection;
-        $this->output = $output;
+        $this->pool = $pool;
     }
 
+    /**
+     * @param string $schema
+     * @param string $table
+     */
     public function chop(string $schema, string $table)
     {
-        $this->output->write("chopping down {$schema}/{$table}... ", OutputInterface::VERBOSITY_DEBUG);
-
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
-                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 %4$s < %5$s',
+                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 --execute=%5$s %4$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),
@@ -54,12 +55,7 @@ class MysqlTableChopper implements TableChopperInterface
                 escapeshellarg(sprintf('TRUNCATE `%s`', $table))
             )
         );
-        $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-
-        $this->output->writeln("<info>done</info>", OutputInterface::VERBOSITY_DEBUG);
+        $this->pool->add($process, ['chop', 'schema' => $schema, 'table' => $table]);
     }
 }

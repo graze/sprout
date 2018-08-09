@@ -17,7 +17,7 @@ use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Seed\Seeder;
 use Graze\Sprout\Seed\TableSeederFactory;
-use Graze\Sprout\Seed\TableChopperInterface;
+use Graze\Sprout\Seed\TableSeederInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,7 +48,7 @@ class SeederTest extends TestCase
 
         $seeder = new Seeder($config, $output, $factory);
 
-        $tableSeeder = Mockery::mock(TableChopperInterface::class);
+        $tableSeeder = Mockery::mock(TableSeederInterface::class);
 
         $factory->shouldReceive('getSeeder')->with($connConfig)->andReturn($tableSeeder);
 
@@ -91,7 +91,7 @@ class SeederTest extends TestCase
 
         $seeder = new Seeder($config, $output, $factory);
 
-        $tableSeeder = Mockery::mock(TableChopperInterface::class);
+        $tableSeeder = Mockery::mock(TableSeederInterface::class);
 
         $factory->shouldReceive('getSeeder')->with($connConfig)->andReturn($tableSeeder);
 
@@ -109,7 +109,7 @@ class SeederTest extends TestCase
         $config->shouldReceive('getConnection')
                ->andReturn($connConfig);
         $config->shouldReceive('getSchema')
-            ->andReturn('schema');
+               ->andReturn('schema');
 
         $output = Mockery::mock(OutputInterface::class);
         $output->shouldReceive('writeln')->with('<warning>No tables specified, nothing to do</warning>')->once();
@@ -118,7 +118,7 @@ class SeederTest extends TestCase
 
         $seeder = new Seeder($config, $output, $factory);
 
-        $tableSeeder = Mockery::mock(TableChopperInterface::class);
+        $tableSeeder = Mockery::mock(TableSeederInterface::class);
         $factory->shouldReceive('getSeeder')->with($connConfig)->andReturn($tableSeeder);
 
         $tables = [];

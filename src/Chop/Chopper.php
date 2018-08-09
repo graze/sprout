@@ -14,7 +14,6 @@
 namespace Graze\Sprout\Chop;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Chopper
@@ -36,20 +35,19 @@ class Chopper
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableChopperFactory $factory = null
+        TableChopperFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableChopperFactory($output);
+        $this->factory = $factory;
     }
 
     /**
      * Chop a collection of files to tables
      *
-     * @param string   $path
      * @param string[] $tables
      */
-    public function chop(string $path, array $tables = [])
+    public function chop(array $tables = [])
     {
         $tables = array_unique($tables);
 
@@ -61,14 +59,8 @@ class Chopper
         $tableChopper = $this->factory->getChopper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        $progress = new ProgressBar($this->output);
-        $progress->start(count($tables));
-        $progress->setMessage("chopping tables in {$schema} from {$path}");
-
         foreach ($tables as $table) {
             $tableChopper->chop($schema, $table);
-            $progress->advance();
         }
-        $progress->finish();
     }
 }

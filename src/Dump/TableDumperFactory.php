@@ -2,24 +2,29 @@
 
 namespace Graze\Sprout\Dump;
 
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\Mysql\MysqlTableDumper;
 use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class TableDumperFactory
+class TableDumperFactory implements LoggerAwareInterface
 {
-    /** @var OutputInterface */
-    private $output;
+    use LoggerAwareTrait;
+
+    /** @var Pool */
+    private $processPool;
 
     /**
      * TableDumperFactory constructor.
      *
-     * @param OutputInterface $output
+     * @param Pool $processPool
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(Pool $processPool)
     {
-        $this->output = $output;
+        $this->processPool = $processPool;
     }
 
     /**
@@ -33,11 +38,13 @@ class TableDumperFactory
 
         switch ($driver) {
             case 'mysql':
-                $this->output->writeln(
-                    "Using mysql table dumper for driver: {$driver}",
-                    OutputInterface::VERBOSITY_DEBUG
-                );
-                return new MysqlTableDumper($connection, $this->output);
+                if ($this->logger) {
+                    $this->logger->debug(
+                        "getDumper: using mysql dumper for driver: {$driver}",
+                        ['driver' => $driver]
+                    );
+                }
+                return new MysqlTableDumper($this->processPool, $connection);
             default:
                 throw new InvalidArgumentException("getDumper: no dumper found for driver: `{$driver}`");
         }

@@ -1,0 +1,9 @@
+databases:
+  the_schema:
+    user: 'root'
+    password: 'rootpassword'
+    host: 'db'
+    driver: 'pdo_mysql'
+    morphism:
+      enable: true
+      schemaDefinitionPath: /schema/the_schema

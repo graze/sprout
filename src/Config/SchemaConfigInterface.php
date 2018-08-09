@@ -29,4 +29,11 @@ interface SchemaConfigInterface
      * @return string[]
      */
     public function getExcludes(): array;
+
+    /**
+     * Get the directory name for this schema
+     *
+     * @return string
+     */
+    public function getDirName(): string;
 }

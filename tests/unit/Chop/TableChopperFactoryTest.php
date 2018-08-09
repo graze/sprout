@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of graze/sprout.
- *  
+ *
  * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,27 +13,27 @@
 
 namespace Graze\Sprout\Test\Unit\Chop;
 
-use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Chop\Mysql\MysqlTableChopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Chop\TableChopperInterface;
+use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class TableChopperFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableChopper()
     {
-        $output = Mockery::mock(OutputInterface::class)->shouldIgnoreMissing();
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $ChopperFactory = new TableChopperFactory($output);
+        $chopperFactory = new TableChopperFactory($processTable);
 
-        $tableChopper = $ChopperFactory->getChopper($config);
+        $tableChopper = $chopperFactory->getChopper($config);
 
         $this->assertInstanceOf(TableChopperInterface::class, $tableChopper);
         $this->assertInstanceOf(MysqlTableChopper::class, $tableChopper);
@@ -44,14 +44,14 @@ class TableChopperFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $output = Mockery::mock(OutputInterface::class)->shouldIgnoreMissing();
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $ChopperFactory = new TableChopperFactory($output);
+        $chopperFactory = new TableChopperFactory($processTable);
 
-        $ChopperFactory->getChopper($config);
+        $chopperFactory->getChopper($config);
     }
 }

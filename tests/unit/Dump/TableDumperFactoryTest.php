@@ -2,25 +2,26 @@
 
 namespace Graze\Sprout\Test\Unit\Dump;
 
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\Mysql\MysqlTableDumper;
 use Graze\Sprout\Dump\TableDumperFactory;
 use Graze\Sprout\Dump\TableDumperInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class TableDumperFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableDumper()
     {
-        $output = Mockery::mock(OutputInterface::class)->shouldIgnoreMissing();
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
-            ->andReturn('mysql');
+               ->andReturn('mysql');
 
-        $dumperFactory = new TableDumperFactory($output);
+        $dumperFactory = new TableDumperFactory($processTable);
 
         $tableDumper = $dumperFactory->getDumper($config);
 
@@ -33,13 +34,13 @@ class TableDumperFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $output = Mockery::mock(OutputInterface::class)->shouldIgnoreMissing();
+        $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $dumperFactory = new TableDumperFactory($output);
+        $dumperFactory = new TableDumperFactory($processTable);
 
         $dumperFactory->getDumper($config);
     }

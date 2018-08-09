@@ -14,8 +14,13 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config;
 use Graze\Sprout\Dump\Dumper;
+use Graze\Sprout\Dump\TableDumperFactory;
+use Graze\Sprout\Parser\ParsedSchema;
+use Graze\Sprout\Parser\SchemaParser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,6 +29,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DumpCommand extends Command
 {
+    const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
+
     protected function configure()
     {
         $this->setName('dump');
@@ -37,11 +44,17 @@ class DumpCommand extends Command
             Config::DEFAULT_CONFIG_PATH
         );
 
-        $this->addArgument('schema', InputArgument::REQUIRED, 'The schema configuration to use');
+        $this->addOption(
+            'group',
+            'g',
+            InputOption::VALUE_OPTIONAL,
+            'The group to use'
+        );
+
         $this->addArgument(
-            'table',
-            InputArgument::REQUIRED | InputArgument::IS_ARRAY,
-            'The tables to dump'
+            static::ARGUMENT_SCHEMA_TABLES,
+            InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+            'Collection of schema and tables to use, examples: schema1 schema2 | schema1:* schema2:table1,table2'
         );
     }
 
@@ -54,16 +67,55 @@ class DumpCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $schema = $input->getArgument('schema');
-        $tables = $input->getArgument('table');
-
+        $schemas = $input->getArgument(static::ARGUMENT_SCHEMA_TABLES);
         $config = (new Config())->parse($input->getOption('config'));
+        $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $schemaConfiguration = $config->getSchemaConfiguration($schema);
-        $schemaPath = $config->getSchemaPath($schema);
+        $schemaParser = new SchemaParser($config, $group);
+        $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
-        $dumper = new Dumper($schemaConfiguration, $output);
-        $dumper->dump($schemaPath, $tables);
+        $numTables = array_sum(array_map(
+            function (ParsedSchema $schema) {
+                return count($schema->getTables());
+            },
+            $parsedSchemas
+        ));
+
+        $useGlobal = $numTables <= 10;
+
+        $globalPool = new Pool();
+        $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
+
+        foreach ($parsedSchemas as $schema) {
+            $output->writeln(sprintf(
+                'Dumping <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+                count($schema->getTables()),
+                $schema->getSchameName(),
+                $group
+            ));
+
+            if ($useGlobal) {
+                $pool = $globalPool;
+            } else {
+                $pool = new Pool(
+                    [],
+                    $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
+                    false,
+                    ['dump', 'schema' => $schema->getSchameName()]
+                );
+                $globalPool->add($pool);
+            }
+
+            $dumper = new Dumper($schema->getSchemaConfig(), $output, new TableDumperFactory($pool));
+            $dumper->dump($schema->getPath(), $schema->getTables());
+        }
+
+        $processTable = new Table($output, $globalPool);
+        $processTable->setShowSummary(true);
+
+        if (!$processTable->run(0.1)) {
+            return 1;
+        }
 
         return 0;
     }

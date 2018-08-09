@@ -2,37 +2,49 @@
 
 namespace Graze\Sprout\Seed;
 
+use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Seed\Mysql\MysqlTableSeeder;
 use InvalidArgumentException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class TableSeederFactory
+class TableSeederFactory implements LoggerAwareInterface
 {
-    /** @var OutputInterface */
-    private $output;
+    use LoggerAwareTrait;
+
+    /** @var Pool */
+    private $processPool;
 
     /**
      * TableDumperFactory constructor.
      *
-     * @param OutputInterface $output
+     * @param Pool $processPool
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(Pool $processPool)
     {
-        $this->output = $output;
+        $this->processPool = $processPool;
     }
 
+    /**
+     * @param ConnectionConfigInterface $connection
+     *
+     * @return TableSeederInterface
+     */
     public function getSeeder(ConnectionConfigInterface $connection): TableSeederInterface
     {
         $driver = $connection->getDriver();
 
         switch ($driver) {
             case 'mysql':
-                $this->output->writeln(
-                    "Using mysql table seeder for driver: {$driver}",
-                    OutputInterface::VERBOSITY_DEBUG
-                );
-                return new MysqlTableSeeder($connection, $this->output);
+                if ($this->logger) {
+                    $this->logger->debug(
+                        "getSeeder: using mysql seeder for driver: {$driver}",
+                        ['driver' => $driver]
+                    );
+                }
+                return new MysqlTableSeeder($this->processPool, $connection);
             default:
                 throw new InvalidArgumentException("getSeeder: no seeder found for driver: `{$driver}`");
         }
