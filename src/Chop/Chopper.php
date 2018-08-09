@@ -14,7 +14,6 @@
 namespace Graze\Sprout\Chop;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Chopper
@@ -36,11 +35,11 @@ class Chopper
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableChopperFactory $factory = null
+        TableChopperFactory $factory
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
-        $this->factory = $factory ?: new TableChopperFactory($output);
+        $this->factory = $factory;
     }
 
     /**

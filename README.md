@@ -24,6 +24,12 @@ Via Composer
 ~$ composer require graze/sprout
 ```
 
+Via docker
+
+```bash
+`$ docker run -v [volumes] --rm graze/sprout [command]
+```
+
 ## Usage
 
 ### Quick Start

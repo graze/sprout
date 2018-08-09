@@ -23,7 +23,7 @@ class MysqlTableChopper implements TableChopperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
-    /** @var Table */
+    /** @var Pool */
     private $pool;
 
     /**

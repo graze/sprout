@@ -92,7 +92,6 @@ class Config
         // populates the schema / connection.dbname properties for each defined schema if not set
         $schemas = $config['schemas'];
         foreach ($schemas as $schema => $value) {
-            // TODO: remove these when config-validator is updated to handle child builders
             $value = SchemaConfig::getValidator()->validate($value);
             $value['connection'] = ConnectionConfig::getValidator()->validate($value['connection']);
 
