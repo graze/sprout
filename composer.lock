@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70954ed15be8299a052ffece70291e78",
+    "content-hash": "81947cb2e97673f3b39b9549b9411771",
     "packages": [
         {
             "name": "graze/config-validation",
@@ -171,26 +171,26 @@
         },
         {
             "name": "graze/parallel-process",
-            "version": "dev-events-events",
+            "version": "0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/graze/parallel-process.git",
-                "reference": "47373a2692f0b42dfafbfec96078e7d840b76c91"
+                "reference": "6253338e5e9cb0ab17e8f06ec76a11673714c5ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/graze/parallel-process/zipball/47373a2692f0b42dfafbfec96078e7d840b76c91",
-                "reference": "47373a2692f0b42dfafbfec96078e7d840b76c91",
+                "url": "https://api.github.com/repos/graze/parallel-process/zipball/6253338e5e9cb0ab17e8f06ec76a11673714c5ab",
+                "reference": "6253338e5e9cb0ab17e8f06ec76a11673714c5ab",
                 "shasum": ""
             },
             "require": {
-                "graze/console-diff-renderer": "^0.6.1",
                 "graze/data-structure": "^2.0",
                 "php": "^5.5 | ^7.0",
                 "symfony/event-dispatcher": "^2.8 | ^3.2 | ^4.0",
                 "symfony/process": "^2.8 | ^3.2 | ^4.0"
             },
             "require-dev": {
+                "graze/console-diff-renderer": "^0.6.1",
                 "graze/standards": "^2",
                 "mockery/mockery": "^1.0",
                 "phpunit/phpunit": "^5.7.21|^6|^7",
@@ -198,6 +198,7 @@
                 "symfony/console": "^3.1 | ^4"
             },
             "suggest": {
+                "graze/console-diff-renderer": "required to use Table and Lines",
                 "symfony/console": "To use the Table to print current runs"
             },
             "type": "library",
@@ -229,7 +230,7 @@
                 "graze",
                 "parallel-process"
             ],
-            "time": "2018-08-08T11:55:36+00:00"
+            "time": "2018-08-08T17:22:30+00:00"
         },
         {
             "name": "graze/sort",
@@ -2414,9 +2415,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "graze/parallel-process": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

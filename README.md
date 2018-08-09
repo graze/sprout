@@ -14,30 +14,35 @@ Sprout is a tool to help Dump, Truncate and Seed development data into your data
 1. Seed sql data from local files
 1. Dump data from mysql tables 
 1. Performs actions in parallel
+1. Handle multiple groups of seed data (for example, `static`, `core`, `testing`)
 
 ## Install
 
 Via Composer
 
 ```bash
-composer require graze/sprout
+~$ composer require graze/sprout
 ```
 
 ## Usage
 
-### Initial Start
+### Quick Start
 
 ```bash
 ~$ # Dump all tables you are interested in
 ~$ sprout dump --config=config/sprout.yml --group=core a_schema:table_1,table_2 ...
 
-~$ # Store the 
+~$ # Store the data in your repository of choice
+~$ git add /seed/data/*
+
+~$ # Seed the data from your seed data
+~$ sprout seed --config=config/sprout.yml --group=core
 ```
 
 ### Seeding
 
 ```bash
-`$ sprout seed [--config=<path>] [--group=<group>] [--chop] [<schema>[:<table>,...]] ...
+~$ sprout seed [--config=<path>] [--group=<group>] [--chop] [<schema>[:<table>,...]] ...
 
 ~$ sprout seed --config=config/sprout.yml the_schema
 ~$ sprout seed --config=config/sprout.yml --chop the_schema

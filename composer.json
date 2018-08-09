@@ -30,7 +30,7 @@
   "require": {
     "php": "^7.0",
     "symfony/console": "^3.3 | ^4",
-    "graze/parallel-process": "dev-events-events",
+    "graze/parallel-process": "^0.7",
     "graze/console-diff-renderer": "^0.6.1",
     "symfony/filesystem": "^3.3 | ^4",
     "graze/data-structure": "^2.0",
