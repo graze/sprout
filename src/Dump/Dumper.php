@@ -14,6 +14,7 @@
 namespace Graze\Sprout\Dump;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
+use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Dumper
@@ -59,10 +60,6 @@ class Dumper
 
         $tableDumper = $this->factory->getDumper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
-
-        if (!is_dir($path)) {
-            mkdir($path, 0666, true);
-        }
 
         foreach ($tables as $table) {
             $file = sprintf('%s/%s.sql', $path, $table);
