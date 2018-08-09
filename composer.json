@@ -30,13 +30,13 @@
   "require": {
     "php": "^7.0",
     "symfony/console": "^3.3 | ^4",
+    "symfony/filesystem": "^3.3 | ^4",
+    "symfony/yaml": "^3.3 | ^4",
     "graze/parallel-process": "^0.7",
     "graze/console-diff-renderer": "^0.6.1",
-    "symfony/filesystem": "^3.3 | ^4",
     "graze/data-structure": "^2.0",
     "respect/validation": "^1.1",
     "graze/config-validation": "^0.2",
-    "symfony/yaml": "^4.1",
     "psr/log": "^1.0"
   },
   "require-dev": {
