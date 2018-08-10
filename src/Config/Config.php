@@ -89,11 +89,11 @@ class Config
 
         $config = $this->validator->validate($fileConfig);
 
-        // populates the schema / connection.dbname properties for each defined schema if not set
+        // populates the schema / connection.dbName properties for each defined schema if not set
         $schemas = $config['schemas'];
         foreach ($schemas as $schema => $value) {
+            // this will populate any missing values with their defaults
             $value = SchemaConfig::getValidator()->validate($value);
-            $value['connection'] = ConnectionConfig::getValidator()->validate($value['connection']);
 
             if (is_null($value['schema'])) {
                 $config['schemas'][$schema]['schema'] = $schema;

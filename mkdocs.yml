@@ -1,0 +1,45 @@
+site_name: Sprout
+site_description: Sprout seeds your data
+site_author: graze.com
+repo_url: https://github.com/graze/sprout
+theme:
+  name: 'material'
+  custom_dir: theme
+  favicon: assets/images/favicon.ico
+  language: en
+  include_sidebar: true
+  palette:
+    primary: 'cyan'
+
+nav:
+- Home: 'sprout.md'
+- Setup:
+  - 'Initial Setup': 'sprout/#quick-start'
+  - Configuration File: 'configuration.md'
+  - Composer: 'composer.md'
+  - Docker: 'docker.md'
+- Running:
+  - Seeding: 'seeding.md'
+  - Dumping: 'dumping.md'
+  - Grouping: 'grouping.md'
+
+markdown_extensions:
+  - admonition:
+  - markdown.extensions.tables:
+  - pymdownx.magiclink:
+  - pymdownx.tilde:
+  - pymdownx.betterem:
+  - pymdownx.superfences:
+  - pymdownx.highlight:
+      css_class: codehilite
+      extend_pygments_lang:
+        - name: php
+          lang: php
+          options:
+            startinline: True
+  - pymdownx.inlinehilite:
+  - pymdownx.emoji:
+  - pymdownx.escapeall:
+      hardbreak: True
+      nbsp: True
+  - pymdownx.tasklist:

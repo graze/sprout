@@ -1,4 +1,5 @@
-INSERT INTO `country` (`id`, `country_code`, `country_code_iso2`, `country_code_iso3`, `name`, `decimal_point`, `thousands_separator`, `added`, `updated`, `deleted`) VALUES
+INSERT INTO `country` 
+(`id`, `country_code`, `country_code_iso2`, `country_code_iso3`, `name`, `decimal_point`, `thousands_separator`, `added`, `updated`, `deleted`) VALUES 
 (1,'AF','AF','AFG','Afghanistan','.',',','2012-09-20 12:43:09','2015-10-07 11:05:58',NULL),
 (2,'AX','AX','ALA','Aland Islands','.',',','2012-09-20 12:43:09','2015-10-07 11:05:58',NULL),
 (3,'AL','AL','ALB','Albania','.',',','2012-09-20 12:43:09','2015-10-07 11:05:58',NULL),
