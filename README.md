@@ -5,13 +5,13 @@
 [![Build Status](https://img.shields.io/travis/graze/sprout/master.svg?style=flat-square)](https://travis-ci.org/graze/sprout)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/graze/sprout.svg?style=flat-square)](https://scrutinizer-ci.com/g/graze/sprout)
-[![Total Downloads](https://img.shields.io/packagist/dt/graze/sprout.svg?style=flat-square)](https://packagist.org/packages/graze/sprout)
 [![PHP Version](https://img.shields.io/packagist/php-v/graze/sprout.svg?style=flat-square)](https://php.net)
 [![Docker Image Size](https://img.shields.io/microbadger/image-size/graze/sprout.svg?style=flat-square)](https://hub.docker.com/r/graze/sprout/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/graze/sprout.svg?style=flat-square)](https://hub.docker.com/r/graze/sprout/)
 
 Sprout is a tool to help Dump, Truncate and Seed development data into your databases.
 
-![](https://78.media.tumblr.com/534425eb11706448af8ce5838629f76d/tumblr_inline_n9t8gdzC7p1qzjzhu.gif)
+![fun image](https://78.media.tumblr.com/534425eb11706448af8ce5838629f76d/tumblr_inline_n9t8gdzC7p1qzjzhu.gif)
 
 1. Seed sql data from local files
 1. Dump data from mysql tables
@@ -36,7 +36,7 @@ docker run -v [volumes] --rm graze/sprout [command]
 
 ### File Structure
 
-Sprout will use the following file structure by default, you can change the root and each group's path in the 
+Sprout will use the following file structure by default, you can change the root and each group's path in the
 configuration file.
 
 ```text
@@ -109,8 +109,8 @@ sprout dump --config=config/sprout.yml --group=core the_schema:country
 
 The configuration file follows the following standards.
 
-By default sprout looks for a `config/sprout.yml` file, you can specify a different file 
-using `--config=path/to/file.yml`. 
+By default sprout looks for a `config/sprout.yml` file, you can specify a different file
+using `--config=path/to/file.yml`.
 
 ```yaml
 defaults:
@@ -120,7 +120,7 @@ defaults:
   # number of simultaneous processors to run at a time (default: 10)
   simultaneousProcesses: 10
 
-# ability to specify custom paths for groups 
+# ability to specify custom paths for groups
 groups:
   core:
     path: /custom/path/to/group
@@ -130,7 +130,7 @@ schemas:
   <name>:
     # [optional] the actual name of the schema in the database. If not specified, <name> from above will be used
     schema: 'schema'
-    
+
     # Connection details - this is just an example, you may want to specify
     # different properties, e.g. if connecting to a remote server. You are
     # advised to refer to the 'pdo' documentation for further details.

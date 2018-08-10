@@ -19,8 +19,8 @@ This is to spec out what we would require?
 - Be as quick as possible (use as many tricks to speed up seeding as possible)
 - Handle at least mysql
 - Group seeding into types (core, operational, testing)
-    - You could make a custom group for testing a particular problem ?
-- When using a .sql file, the table must be truncated before seeding 
+  - You could make a custom group for testing a particular problem ?
+- When using a .sql file, the table must be truncated before seeding
 
 ### Extended requirements
 
@@ -32,8 +32,8 @@ This is to spec out what we would require?
 
 - You have a series of grouped seed data (e.g. core, sample, test)
 - You can apply each of the seed data independently
-    - For example, you can 'apply' each test data seed at the beginning of each test run (or maybe even each test)
-    - test data should be idempotent (can be created and removed without modifying other test data)
+  - For example, you can 'apply' each test data seed at the beginning of each test run (or maybe even each test)
+  - test data should be idempotent (can be created and removed without modifying other test data)
 
 ## Commands
 
@@ -92,7 +92,7 @@ default:
   # default path
   path: /seed
 
-# ability to specify custom paths for groups 
+# ability to specify custom paths for groups
 groups:
   core:
     path: /custom/path/to/stuff
@@ -101,7 +101,7 @@ schemas:
 
   # name of the schema in the database
   <name>:
-  
+
     # Connection details - this is just an example, you may want to specify
     # different properties, e.g. if connecting to a remote server. You are
     # advised to refer to the 'pdo' documentation for further details.
@@ -139,11 +139,11 @@ schemas:
 1. if doing this from within php, how can we parallelise -> spawn workers?
 1. when you have multiple groups, how to do you handle truncation?
 1. When truncating should you truncate all tables in a schema, irrespective of the seed data?
-1. When dealing with projects that are not php, why would use 
+1. When dealing with projects that are not php, why would use
 
 ## Future / Scope
 
 1. Should this be limited to sql dumping/restoring only?
-    1. Alternative is to use php/yaml/json files too. 
+    1. Alternative is to use php/yaml/json files too.
 1. Should this handle stored procedures?
 1. How should this handle triggers / complex table setup? (prep tables, disable triggers, indexes, etc)

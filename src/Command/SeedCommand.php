@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SeedCommand extends Command
 {
     const OPTION_CONFIG          = 'config';
-    const OPTION_CHOP            = 'chop';
+    const OPTION_NO_CHOP         = 'no-chop';
     const OPTION_GROUP           = 'group';
     const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
 
@@ -49,10 +49,10 @@ class SeedCommand extends Command
         );
 
         $this->addOption(
-            static::OPTION_CHOP,
-            't',
+            static::OPTION_NO_CHOP,
+            '',
             InputOption::VALUE_NONE,
-            'chop (truncate) tables before seeding them'
+            'do not chop (truncate) tables before seeding them'
         );
 
         $this->addOption(
@@ -82,7 +82,7 @@ class SeedCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        if ($input->getOption(static::OPTION_CHOP)) {
+        if (!$input->getOption(static::OPTION_NO_CHOP)) {
             $chopCommand = new ChopCommand();
             $exitCode = $chopCommand->run(
                 new ArrayInput([

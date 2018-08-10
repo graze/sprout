@@ -1,4 +1,4 @@
-# Sprout
+# Sprout 🌱
 
 Sprout is a tool to help you Populate your databases with seed data.
 
@@ -6,10 +6,11 @@ It's core method is by using .sql files that can be committed and diffed by your
 
 It can:
 
-1. [Seed](seeding.md) sql data from local files
-1. [Dump](dumping.md) data from mysql tables
+1. [Seed](commands/seed.md) sql data from local files
+1. [Dump](commands/dump.md) data from mysql tables
+1. [Chop (truncate)](commands/chop.md) data in mysql tables
 1. Performs actions in parallel
-1. Handle multiple [groups](grouping.md) of seed data (for example, `static`, `core`, `testing`)
+1. Handle multiple [groups](groups.md) of seed data (for example, `static`, `core`, `testing`)
 
 ## Quick Start
 
@@ -26,13 +27,15 @@ You will need a [configuration](setup/configuration.md) file to tell sprout how 
 
 ### Populate your seed data
 
-You can [group](grouping.md) your seed data depending on its purpose. For example: `static`, `operational` and `development`.
+You can [group](groups.md) your seed data depending on its purpose. For example: `static`, `operational` and `development`.
 
 Ensure your database is populated with your seed data and run the following command:
 
 ```bash
 sprout dump --config=/path/to/config.yml --group=group1 schema:table1,table2,... schema2:table3,... ...
 ```
+
+This will create a set of `.sql` files locally containing the data in your database.
 
 !!! warning
     Currently you need to create the directories before running this command (or let it fail and tell you what you need
@@ -44,4 +47,10 @@ You can now seed your data using the local files.
 
 ```bash
 sprout seed --config=/path/to/config.yml --group=group1
+```
+
+If you do not need to truncate your tables first, use the `--no-chop` option.
+
+```bash
+sprout seed --config=/path/to/config.yml --no-chop --group=group1
 ```

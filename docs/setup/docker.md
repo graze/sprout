@@ -58,5 +58,5 @@ services:
 ```
 
 ```bash
-docker run --rm -v $$(pwd)/config/sprout:/app/config -v $$(pwd)/seed:/seed graze/sprout:0.1 [command]
+docker run --rm -v $(pwd)/config/sprout:/app/config -v $(pwd)/seed:/seed graze/sprout:0.1 [command]
 ```
