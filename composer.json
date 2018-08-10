@@ -58,6 +58,7 @@
     }
   },
   "bin": [
-    "./bin/sprout"
+    "./bin/sprout",
+    "./bin/process-mysqldump"
   ]
 }
