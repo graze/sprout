@@ -17,7 +17,6 @@ WORKDIR /app
 COPY src /app/src
 COPY composer.json /app/composer.json
 COPY composer.lock /app/composer.lock
-COPY dump-parser /app/dump-parser
 
 RUN composer install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader --prefer-dist
 
