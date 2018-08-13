@@ -37,7 +37,7 @@ after_script:
 stages:
   - test
   - name: deploy
-    if: branch = docs-and-safer-dump
+    if: branch = master
 jobs:
   include:
   - stage: deploy
@@ -50,4 +50,4 @@ jobs:
       verbose: true
       github-token: $GITHUB_TOKEN
       on:
-        branch: docs-and-safer-dump
+        branch: master
