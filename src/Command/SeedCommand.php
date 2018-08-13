@@ -116,7 +116,7 @@ class SeedCommand extends Command
             $output->writeln(sprintf(
                 'Seeding <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
                 count($schema->getTables()),
-                $schema->getSchameName(),
+                $schema->getSchemaName(),
                 $group
             ));
 
@@ -127,7 +127,7 @@ class SeedCommand extends Command
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,
-                    ['seed', 'schema' => $schema->getSchameName()]
+                    ['seed', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }

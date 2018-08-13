@@ -93,7 +93,7 @@ class ChopCommand extends Command
             $output->writeln(sprintf(
                 'Chopping down <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
                 count($schema->getTables()),
-                $schema->getSchameName(),
+                $schema->getSchemaName(),
                 $group
             ));
 
@@ -104,7 +104,7 @@ class ChopCommand extends Command
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,
-                    ['chop', 'schema' => $schema->getSchameName()]
+                    ['chop', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }

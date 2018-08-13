@@ -65,7 +65,7 @@ class ParsedSchema
     /**
      * @return string
      */
-    public function getSchameName(): string
+    public function getSchemaName(): string
     {
         return $this->schemaConfig->getSchema();
     }
