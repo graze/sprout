@@ -12,9 +12,6 @@ Sprout allows you to group your seed data into arbitrary categories.
 
 ## Creating grouped seed data
 
-!!! note
-    Currently you must create the group/schema directory before running this.
-
 You can dump data from sprout into a grouped collection using the `--group=<group>` option on all of the commands
 
 ```bash
