@@ -128,4 +128,33 @@ class DumperTest extends TestCase
         $tables = [];
         $this->dumper->dump('/some/path/schema', $tables);
     }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage dump: failed to create directory: /some/path/schema
+     */
+    public function testDumperThrowsAnExceptionIfUnableToCreateTheDirectory()
+    {
+        $connConfig = Mockery::mock(ConnectionConfigInterface::class);
+        $this->config->shouldReceive('getConnection')
+                     ->andReturn($connConfig);
+        $this->config->shouldReceive('getSchema')
+                     ->andReturn('schema');
+
+        $this->outputter->shouldReceive('writeln');
+        $this->outputter->shouldReceive('write');
+        $this->outputter->shouldReceive('isDecorated')->andReturn(false);
+        $this->outputter->shouldReceive('getVerbosity')->andReturn(OutputInterface::VERBOSITY_QUIET);
+
+        $tableDumper = Mockery::mock(TableDumperInterface::class);
+
+        $this->factory->shouldReceive('getDumper')->with($connConfig)->andReturn($tableDumper);
+
+        $this->filesystem->allows()
+                         ->createDir('/some/path/schema', Mockery::type(Config::class))
+                         ->andReturns(false);
+
+        $tables = ['table1', 'table1'];
+        $this->dumper->dump('/some/path/schema', $tables);
+    }
 }

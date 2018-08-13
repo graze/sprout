@@ -3,25 +3,25 @@
 namespace Graze\Sprout\Test\Unit\Dump;
 
 use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Dump\Mysql\MysqlTableDumper;
 use Graze\Sprout\Dump\TableDumperFactory;
 use Graze\Sprout\Dump\TableDumperInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
 class TableDumperFactoryTest extends TestCase
 {
     public function testMysqlReturnsMysqlTableDumper()
     {
-        $processTable = Mockery::mock(Pool::class);
+        $pool = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $dumperFactory = new TableDumperFactory($processTable);
+        $dumperFactory = new TableDumperFactory($pool);
 
         $tableDumper = $dumperFactory->getDumper($config);
 
@@ -34,14 +34,36 @@ class TableDumperFactoryTest extends TestCase
      */
     public function testUnknownThrowsException()
     {
-        $processTable = Mockery::mock(Pool::class);
+        $pool = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $dumperFactory = new TableDumperFactory($processTable);
+        $dumperFactory = new TableDumperFactory($pool);
 
         $dumperFactory->getDumper($config);
+    }
+
+    public function testLogging()
+    {
+        $logger = Mockery::mock(LoggerInterface::class);
+        $pool = Mockery::mock(Pool::class);
+        $config = Mockery::mock(ConnectionConfigInterface::class);
+        $config->shouldReceive('getDriver')
+               ->andReturn('mysql');
+
+        $dumperFactory = new TableDumperFactory($pool);
+        $dumperFactory->setLogger($logger);
+
+        $logger->allows()
+               ->debug(
+                   "getDumper: using mysql dumper for driver: mysql",
+                   ['driver' => 'mysql']
+               );
+
+        $tableDumper = $dumperFactory->getDumper($config);
+
+        $this->assertInstanceOf(TableDumperInterface::class, $tableDumper);
     }
 }

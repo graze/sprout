@@ -218,7 +218,7 @@ class SchemaParserTest extends TestCase
         $first = $output[0];
 
         $this->assertEquals('schema1', $first->getSchemaName());
-        $this->assertEquals(['table1'], $first->getTables());
+        $this->assertEquals([], $first->getTables());
         $this->assertEquals('/a/path/to/group/schema1', $first->getPath());
         $this->assertEquals($schema1, $first->getSchemaConfig());
 
