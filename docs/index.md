@@ -1,4 +1,4 @@
-# Sprout 🌱
+# 🌱 Sprout
 
 Sprout is a tool to help you Populate your databases with seed data.
 
