@@ -1,7 +1,6 @@
 docs/
 example/
 hooks/
-theme/
 
 .git
 .markdownlint.json
