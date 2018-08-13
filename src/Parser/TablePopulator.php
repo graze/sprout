@@ -14,7 +14,6 @@
 namespace Graze\Sprout\Parser;
 
 use League\Flysystem\AdapterInterface;
-use SplFileInfo;
 
 class TablePopulator
 {
@@ -47,26 +46,24 @@ class TablePopulator
             $files = $this->filesystem->listContents($parsedSchema->getPath());
             $files = array_values(array_filter(
                 $files,
-                function (SplFileInfo $file) {
+                function (array $file) {
                     // ignore empty file names (`.bla`) files
-                    return ($file->getBasename('.' . $file->getExtension()) !== '');
+                    return (pathinfo($file['path'], PATHINFO_FILENAME) !== '');
                 }
             ));
 
             // sort by file size, largest first
             usort(
                 $files,
-                function (SplFileInfo $a, SplFileInfo $b) {
-                    $left = $a->getSize();
-                    $right = $b->getSize();
-                    return ($left == $right) ? 0 : (($left > $right) ? -1 : 1);
+                function (array $a, array $b) {
+                    return ($a['size'] == $b['size']) ? 0 : (($a['size'] > $b['size']) ? -1 : 1);
                 }
             );
 
             // remove the file extensions to get the table names
             $parsedSchema->setTables(array_map(
-                function (SplFileInfo $file) {
-                    return $file->getBasename('.' . $file->getExtension());
+                function (array $file) {
+                    return pathinfo($file['path'], PATHINFO_FILENAME);
                 },
                 $files
             ));

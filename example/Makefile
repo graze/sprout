@@ -26,7 +26,7 @@ chop-group: start-db
 
 dump: ## Dump the data from a table
 dump: start-db
-	docker-compose run --rm sprout dump the_schema:* -v
+	docker-compose run --rm sprout dump the_schema -v
 
 dump-group: ## Dump the data from a table
 dump-group: start-db

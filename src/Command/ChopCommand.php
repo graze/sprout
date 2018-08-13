@@ -20,6 +20,8 @@ use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config\Config;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Parser\TablePopulator;
+use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,7 +76,8 @@ class ChopCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $schemaParser = new SchemaParser($config, $group);
+        $tablePopulator = new TablePopulator(new Local('.'));
+        $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $numTables = array_sum(array_map(

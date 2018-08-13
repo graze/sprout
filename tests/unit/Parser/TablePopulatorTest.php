@@ -46,17 +46,8 @@ class TablePopulatorTest extends TestCase
                          ->has('/a/path')
                          ->andReturns(true);
 
-        $file1 = Mockery::mock(\SplFileInfo::class);
-        $file1->allows(['getExtension' => 'sql', 'getSize' => 1234]);
-        $file1->allows()
-              ->getBasename('.sql')
-              ->andReturns('table1');
-
-        $file2 = Mockery::mock(\SplFileInfo::class);
-        $file2->allows(['getExtension' => 'sql', 'getSize' => 1235]);
-        $file2->allows()
-              ->getBasename('.sql')
-              ->andReturns('table2');
+        $file1 = ['path' => '/a/path/table1.sql', 'size' => 1234];
+        $file2 = ['path' => '/a/path/table2.sql', 'size' => 1234];
 
         $this->fileSystem->allows()
                          ->listContents('/a/path')
