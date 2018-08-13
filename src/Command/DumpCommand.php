@@ -16,11 +16,13 @@ namespace Graze\Sprout\Command;
 use Exception;
 use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
 use Graze\Sprout\Dump\Dumper;
 use Graze\Sprout\Dump\TableDumperFactory;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Parser\TablePopulator;
+use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -71,7 +73,9 @@ class DumpCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $schemaParser = new SchemaParser($config, $group);
+        $fileSystem = new Local('.');
+        $tablePopulator = new TablePopulator($fileSystem);
+        $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $numTables = array_sum(array_map(
@@ -90,7 +94,7 @@ class DumpCommand extends Command
             $output->writeln(sprintf(
                 'Dumping <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
                 count($schema->getTables()),
-                $schema->getSchameName(),
+                $schema->getSchemaName(),
                 $group
             ));
 
@@ -101,12 +105,12 @@ class DumpCommand extends Command
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,
-                    ['dump', 'schema' => $schema->getSchameName()]
+                    ['dump', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }
 
-            $dumper = new Dumper($schema->getSchemaConfig(), $output, new TableDumperFactory($pool));
+            $dumper = new Dumper($schema->getSchemaConfig(), $output, new TableDumperFactory($pool), $fileSystem);
             $dumper->dump($schema->getPath(), $schema->getTables());
         }
 

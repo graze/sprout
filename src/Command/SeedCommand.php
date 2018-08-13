@@ -16,11 +16,13 @@ namespace Graze\Sprout\Command;
 use Exception;
 use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Parser\TablePopulator;
 use Graze\Sprout\Seed\Seeder;
 use Graze\Sprout\Seed\TableSeederFactory;
+use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -97,7 +99,8 @@ class SeedCommand extends Command
             }
         }
 
-        $schemaParser = new SchemaParser($config, $group);
+        $tablePopulator = new TablePopulator(new Local('.'));
+        $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $numTables = array_sum(array_map(
@@ -116,7 +119,7 @@ class SeedCommand extends Command
             $output->writeln(sprintf(
                 'Seeding <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
                 count($schema->getTables()),
-                $schema->getSchameName(),
+                $schema->getSchemaName(),
                 $group
             ));
 
@@ -127,7 +130,7 @@ class SeedCommand extends Command
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,
-                    ['seed', 'schema' => $schema->getSchameName()]
+                    ['seed', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }

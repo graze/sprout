@@ -145,5 +145,21 @@ schemas:
 
 1. Should this be limited to sql dumping/restoring only?
     1. Alternative is to use php/yaml/json files too.
+        1. sql/yaml/json are similar, need a yaml/json to sql and back converter.
+
+            ```yaml
+            schema: some_schema
+            table: some_table
+            prefix: prf_
+
+            data:
+              - id: 123
+                name: something
+                date: 2018-02-12 16:15:15
+
+              - id: 234
+                name: other
+                cake: things
+            ```
 1. Should this handle stored procedures?
 1. How should this handle triggers / complex table setup? (prep tables, disable triggers, indexes, etc)

@@ -1,3 +1,5 @@
 /vendor/
 /tests/report/
 /site/
+
+.idea

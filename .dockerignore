@@ -1,0 +1,15 @@
+docs/
+example/
+hooks/
+theme/
+
+.git
+.markdownlint.json
+.travis.yml
+.idea
+LICENSE
+Makefile
+mkdocs.yml
+phpcs.xml
+phpunit.xml.dist
+README.md

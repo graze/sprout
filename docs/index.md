@@ -1,4 +1,4 @@
-# Sprout 🌱
+# 🌱 Sprout
 
 Sprout is a tool to help you Populate your databases with seed data.
 
@@ -36,10 +36,6 @@ sprout dump --config=/path/to/config.yml --group=group1 schema:table1,table2,...
 ```
 
 This will create a set of `.sql` files locally containing the data in your database.
-
-!!! warning
-    Currently you need to create the directories before running this command (or let it fail and tell you what you need
-    to create)
 
 ### Seed your data
 

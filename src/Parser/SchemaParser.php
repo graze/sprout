@@ -2,8 +2,8 @@
 
 namespace Graze\Sprout\Parser;
 
-use Graze\Sprout\Config;
-use SplFileInfo;
+use Graze\Sprout\Config\Config;
+use Graze\Sprout\Config\SchemaConfigInterface;
 
 class SchemaParser
 {
@@ -11,15 +11,19 @@ class SchemaParser
     private $config;
     /** @var null|string */
     private $group;
+    /** @var TablePopulator */
+    private $populator;
 
     /**
      * SchemaParser constructor.
      *
-     * @param Config      $config
-     * @param string|null $group
+     * @param TablePopulator $populator
+     * @param Config         $config
+     * @param string|null    $group
      */
-    public function __construct(Config $config, string $group = null)
+    public function __construct(TablePopulator $populator, Config $config, string $group = null)
     {
+        $this->populator = $populator;
         $this->config = $config;
         $this->group = $group;
     }
@@ -33,7 +37,7 @@ class SchemaParser
     {
         if (count($schemaTables) === 0) {
             $schemaTables = array_map(
-                function (Config\SchemaConfigInterface $schemaConfig) {
+                function (SchemaConfigInterface $schemaConfig) {
                     return $schemaConfig->getSchema();
                 },
                 $this->config->get(Config::CONFIG_SCHEMAS)
@@ -42,7 +46,7 @@ class SchemaParser
 
         $parsedSchemas = [];
         foreach ($schemaTables as $schemaTable) {
-            if (preg_match('/^([a-z_]+):(.+)$/i', $schemaTable, $matches)) {
+            if (preg_match('/^([a-z0-9_]+):(.+)$/i', $schemaTable, $matches)) {
                 $schema = $matches[1];
                 $tables = explode(',', $matches[2]);
             } else {
@@ -57,54 +61,6 @@ class SchemaParser
             );
         };
 
-        return array_filter(array_map([$this, 'populateTables'], $parsedSchemas));
-    }
-
-    /**
-     * @param ParsedSchema $parsedSchema
-     *
-     * @return ParsedSchema|null
-     */
-    public function populateTables(ParsedSchema $parsedSchema)
-    {
-        if (!is_dir($parsedSchema->getPath())) {
-            return null;
-        }
-
-        if (count($parsedSchema->getTables()) === 0) {
-            // find existing tables
-            $files = iterator_to_array(new \FilesystemIterator($parsedSchema->getPath()));
-            $files = array_values(array_filter(
-                $files,
-                function (SplFileInfo $file) {
-                    // ignore empty file names (`.bla`) files
-                    return (!in_array($file->getFilename(), ['.', '..'])
-                            && pathinfo($file, PATHINFO_FILENAME) !== '');
-                }
-            ));
-
-            // sort by file size, largest first
-            usort(
-                $files,
-                function (SplFileInfo $a, SplFileInfo $b) {
-                    $left = $a->getSize();
-                    $right = $b->getSize();
-                    return ($left == $right) ? 0 : (($left > $right) ? -1 : 1);
-                }
-            );
-
-            // remove the file extensions to get the table names
-            $parsedSchema->setTables(array_map(
-                function (SplFileInfo $file) {
-                    return pathinfo($file, PATHINFO_FILENAME);
-                },
-                $files
-            ));
-        }
-
-        if (count($parsedSchema->getTables()) === 0) {
-            return null;
-        }
-        return $parsedSchema;
+        return array_filter(array_map([$this->populator, 'populateTables'], $parsedSchemas));
     }
 }

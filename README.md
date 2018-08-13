@@ -1,4 +1,4 @@
-# Sprout
+# 🌱 Sprout
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/graze/sprout.svg?style=flat-square)](https://packagist.org/packages/graze/sprout)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
@@ -33,6 +33,8 @@ docker run -v [volumes] --rm graze/sprout [command]
 ```
 
 ## Usage
+
+See the [full documentation](https://graze.github.io/sprout) for complete usage information.
 
 ### File Structure
 

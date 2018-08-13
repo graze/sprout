@@ -20,6 +20,7 @@ use Graze\Sprout\Seed\TableSeederFactory;
 use Graze\Sprout\Seed\TableSeederInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
 class TableSeederFactoryTest extends TestCase
 {
@@ -53,5 +54,27 @@ class TableSeederFactoryTest extends TestCase
         $seederFactory = new TableSeederFactory($processTable);
 
         $seederFactory->getSeeder($config);
+    }
+
+    public function testLogging()
+    {
+        $logger = Mockery::mock(LoggerInterface::class);
+        $pool = Mockery::mock(Pool::class);
+        $config = Mockery::mock(ConnectionConfigInterface::class);
+        $config->shouldReceive('getDriver')
+               ->andReturn('mysql');
+
+        $seederFactory = new TableSeederFactory($pool);
+        $seederFactory->setLogger($logger);
+
+        $logger->allows()
+               ->debug(
+                   "getSeeder: using mysql seeder for driver: mysql",
+                   ['driver' => 'mysql']
+               );
+
+        $tableSeeder = $seederFactory->getSeeder($config);
+
+        $this->assertInstanceOf(TableSeederInterface::class, $tableSeeder);
     }
 }

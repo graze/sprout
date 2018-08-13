@@ -20,6 +20,7 @@ use Graze\Sprout\Chop\TableChopperInterface;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
+use Psr\Log\LoggerInterface;
 
 class TableChopperFactoryTest extends TestCase
 {
@@ -53,5 +54,27 @@ class TableChopperFactoryTest extends TestCase
         $chopperFactory = new TableChopperFactory($processTable);
 
         $chopperFactory->getChopper($config);
+    }
+
+    public function testLogging()
+    {
+        $logger = Mockery::mock(LoggerInterface::class);
+        $pool = Mockery::mock(Pool::class);
+        $config = Mockery::mock(ConnectionConfigInterface::class);
+        $config->shouldReceive('getDriver')
+               ->andReturn('mysql');
+
+        $chopperFactory = new TableChopperFactory($pool);
+        $chopperFactory->setLogger($logger);
+
+        $logger->allows()
+               ->debug(
+                   "getChopper: using mysql chopper for driver: mysql",
+                   ['driver' => 'mysql']
+               );
+
+        $tableChopper = $chopperFactory->getChopper($config);
+
+        $this->assertInstanceOf(TableChopperInterface::class, $tableChopper);
     }
 }

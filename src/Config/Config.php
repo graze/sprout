@@ -11,14 +11,10 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout;
+namespace Graze\Sprout\Config;
 
 use Graze\ConfigValidation\ConfigValidatorInterface;
 use Graze\ConfigValidation\Validate;
-use Graze\Sprout\Config\ConnectionConfig;
-use Graze\Sprout\Config\GroupConfig;
-use Graze\Sprout\Config\SchemaConfig;
-use Graze\Sprout\Config\SchemaConfigInterface;
 use InvalidArgumentException;
 use Respect\Validation\Validator as v;
 use Symfony\Component\Yaml\Parser;

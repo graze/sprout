@@ -14,6 +14,8 @@
 namespace Graze\Sprout\Dump;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
+use League\Flysystem\AdapterInterface;
+use League\Flysystem\Config;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -25,6 +27,8 @@ class Dumper
     private $output;
     /** @var TableDumperFactory */
     private $factory;
+    /** @var AdapterInterface */
+    private $filesystem;
 
     /**
      * Dumper constructor.
@@ -32,15 +36,18 @@ class Dumper
      * @param SchemaConfigInterface $schemaConfig
      * @param OutputInterface       $output
      * @param TableDumperFactory    $factory
+     * @param AdapterInterface      $filesystem
      */
     public function __construct(
         SchemaConfigInterface $schemaConfig,
         OutputInterface $output,
-        TableDumperFactory $factory
+        TableDumperFactory $factory,
+        AdapterInterface $filesystem
     ) {
         $this->schemaConfig = $schemaConfig;
         $this->output = $output;
         $this->factory = $factory;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -56,6 +63,10 @@ class Dumper
         if (count($tables) === 0) {
             $this->output->writeln('<warning>No tables specified, nothing to do</warning>');
             return;
+        }
+
+        if ($this->filesystem->createDir($path, new Config()) === false) {
+            throw new RuntimeException('dump: failed to create directory: ' . $path);
         }
 
         $tableDumper = $this->factory->getDumper($this->schemaConfig->getConnection());
