@@ -76,7 +76,7 @@ class ChopCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $tablePopulator = new TablePopulator(new Local('.'));
+        $tablePopulator = new TablePopulator(new Local('/'));
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
@@ -94,10 +94,11 @@ class ChopCommand extends Command
 
         foreach ($parsedSchemas as $schema) {
             $output->writeln(sprintf(
-                'Chopping down <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+                'Chopping down <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info> from <info>%s</info>',
                 count($schema->getTables()),
                 $schema->getSchemaName(),
-                $group
+                $group,
+                $schema->getPath()
             ));
 
             if ($useGlobal) {

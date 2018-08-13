@@ -38,7 +38,7 @@ class TablePopulator
     public function populateTables(ParsedSchema $parsedSchema)
     {
         if (count($parsedSchema->getTables()) === 0) {
-            if ($this->filesystem->has($parsedSchema->getPath()) === false) {
+            if ($parsedSchema->getPath() === '' || $this->filesystem->has($parsedSchema->getPath()) === false) {
                 return null;
             }
 

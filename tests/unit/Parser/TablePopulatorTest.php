@@ -4,7 +4,6 @@ namespace Graze\Sprout\Test\Unit\Parser;
 
 use Graze\Sprout\Config;
 use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\SchemaParser;
 use Graze\Sprout\Parser\TablePopulator;
 use Graze\Sprout\Test\TestCase;
 use League\Flysystem\AdapterInterface;
@@ -84,6 +83,16 @@ class TablePopulatorTest extends TestCase
         $this->fileSystem->allows()
                          ->listContents('/a/path')
                          ->andReturns([]);
+
+        $output = $this->schemaParser->populateTables($parsedSchema);
+
+        $this->assertNull($output);
+    }
+
+    public function testEmptyPathReturnsNull()
+    {
+        $config = Mockery::mock(Config\SchemaConfigInterface::class);
+        $parsedSchema = new ParsedSchema($config, '', []);
 
         $output = $this->schemaParser->populateTables($parsedSchema);
 

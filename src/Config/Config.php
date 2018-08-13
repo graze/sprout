@@ -155,7 +155,7 @@ class Config
     public function getSchemaPath(SchemaConfigInterface $schema, string $group = null): string
     {
         $group = $group ?: $this->get("defaults.group");
-        return sprintf('%s/%s/', $this->getGroupPath($group), $schema->getDirName());
+        return realpath(sprintf('%s/%s/', $this->getGroupPath($group), $schema->getDirName()));
     }
 
     /**

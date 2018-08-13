@@ -73,7 +73,7 @@ class DumpCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $fileSystem = new Local('.');
+        $fileSystem = new Local('/');
         $tablePopulator = new TablePopulator($fileSystem);
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
@@ -92,10 +92,11 @@ class DumpCommand extends Command
 
         foreach ($parsedSchemas as $schema) {
             $output->writeln(sprintf(
-                'Dumping <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+                'Dumping <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info> to <info>%s</info>',
                 count($schema->getTables()),
                 $schema->getSchemaName(),
-                $group
+                $group,
+                $schema->getPath()
             ));
 
             if ($useGlobal) {
