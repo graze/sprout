@@ -56,5 +56,9 @@
       "Graze\\Sprout\\Test\\Unit\\": "tests/unit",
       "Graze\\Sprout\\Test\\Integration\\": "tests/integration"
     }
-  }
+  },
+  "bin": [
+    "./bin/sprout",
+    "./bin/process-mysqldump"
+  ]
 }

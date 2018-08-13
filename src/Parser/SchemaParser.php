@@ -44,7 +44,7 @@ class SchemaParser
         foreach ($schemaTables as $schemaTable) {
             if (preg_match('/^([a-z_]+):(.+)$/i', $schemaTable, $matches)) {
                 $schema = $matches[1];
-                $tables = $matches[2] === '*' ? [] : explode(',', $matches[2]);
+                $tables = explode(',', $matches[2]);
             } else {
                 $schema = $schemaTable;
                 $tables = [];

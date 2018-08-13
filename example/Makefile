@@ -10,11 +10,11 @@ morphism: start-db
 
 seed: ## Seed the data for the database
 seed: start-db
-	docker-compose run --rm sprout seed -t the_schema -v
+	docker-compose run --rm sprout seed the_schema -v
 
 seed-group: ## Seed the data in a group for a database
 seed-group: start-db
-	docker-compose run --rm sprout seed -t --group=core -v
+	docker-compose run --rm sprout seed --group=core -v
 
 chop: ## Truncate the data in the database
 chop: start-db

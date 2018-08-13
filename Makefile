@@ -45,11 +45,17 @@ build-docker: ## Build the docker image
 test: ## Run the unit and integration testsuites.
 test: lint test-unit
 
-lint: ## Run phpcs against the code.
+lint: ## Check file syntax
+lint: lint-php lint-md
+
+lint-php: ## Run phpcs against the code.
 	${DOCKER_RUN} vendor/bin/phpcs -p --warning-severity=0 src/ tests/
 
 lint-fix: ## Run phpcsf and fix possible lint errors.
 	${DOCKER_RUN} vendor/bin/phpcbf -p src/ tests/
+
+lint-md: ## Check the markdown files
+	${DOCKER} run --rm -v $$(pwd):/data:cached gouvinb/docker-markdownlint -v *.md docs/*.md docs/*/*.md
 
 test-unit: ## Run the unit testsuite.
 	${DOCKER_RUN} vendor/bin/phpunit --testsuite unit
@@ -75,6 +81,18 @@ test-coverage-html: ## Run all tests and output coverage to html.
 
 test-coverage-clover: ## Run all tests and output clover coverage to file.
 	${DOCKER_RUN} phpdbg7 -qrr vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
+
+# Documentation
+
+docs-test: ## Run docs test server
+	docker run --rm -it -p 8000:8000 -v $$(pwd):/docs squidfunk/mkdocs-material
+
+docs-build: ## Build the mkdocs documentation
+	docker run --rm -it -v $$(pwd):/docs squidfunk/mkdocs-material build
+
+docs-deploy: ## Deploy the mkdocs documentation
+	docker run --rm -it -v ~/.ssh:/root/.ssh -v $$(pwd):/docs -e GITHUB_TOKEN squidfunk/mkdocs-material gh-deploy
+
 
 # Help
 

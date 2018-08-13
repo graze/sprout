@@ -48,8 +48,8 @@ class MysqlTableDumper implements TableDumperInterface
         $process->setCommandLine(
             sprintf(
                 'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info' .
-                ' --extended-insert --quick --complete-insert %4$s %5$s' .
-                '| sed \'s$VALUES ($VALUES\n($g\' | sed \'s$),($),\n($g\' > %6$s',
+                ' --extended-insert --hex-blob --quick --complete-insert %4$s %5$s ' .
+                '| process-mysqldump > %6$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),

@@ -1,0 +1,55 @@
+site_name: Sprout
+site_description: Sprout seeds your data
+site_author: graze.com
+
+repo_url: https://github.com/graze/sprout
+repo_name: 'GitHub'
+
+docs_dir: 'docs'
+
+theme:
+  name: 'material'
+  custom_dir: theme
+  favicon: assets/images/favicon.ico
+  language: en
+  include_sidebar: true
+  palette:
+    primary: 'cyan'
+
+copyright: "Copyright &copy; 2018 Nature Delivered Ltd."
+
+nav:
+  - 'Getting Started': 'index.md'
+  - Setup:
+    - Configuration File: 'setup/configuration.md'
+    - Composer: 'setup/composer.md'
+    - Docker: 'setup/docker.md'
+  - Commands:
+    - Seed: 'commands/seed.md'
+    - Dump: 'commands/dump.md'
+    - Chop: 'commands/chop.md'
+  - Groups: 'groups.md'
+  - 'Schemas and Tables': 'schemas_tables.md'
+
+markdown_extensions:
+  - admonition:
+  - markdown.extensions.tables:
+  - pymdownx.magiclink:
+  - pymdownx.tilde:
+  - pymdownx.betterem:
+  - pymdownx.superfences:
+  - pymdownx.highlight:
+      css_class: codehilite
+      extend_pygments_lang:
+        - name: php
+          lang: php
+          options:
+            startinline: True
+  - pymdownx.inlinehilite:
+  - pymdownx.emoji:
+  - pymdownx.escapeall:
+      hardbreak: True
+      nbsp: True
+  - pymdownx.tasklist:
+  - toc:
+      permalink: true
