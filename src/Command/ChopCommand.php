@@ -17,7 +17,7 @@ use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
 use Symfony\Component\Console\Command\Command;

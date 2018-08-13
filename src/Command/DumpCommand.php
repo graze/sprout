@@ -16,7 +16,7 @@ namespace Graze\Sprout\Command;
 use Exception;
 use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
 use Graze\Sprout\Dump\Dumper;
 use Graze\Sprout\Dump\TableDumperFactory;
 use Graze\Sprout\Parser\ParsedSchema;

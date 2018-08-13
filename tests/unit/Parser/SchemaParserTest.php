@@ -2,7 +2,8 @@
 
 namespace Graze\Sprout\Test\Unit\Parser;
 
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
+use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
 use Graze\Sprout\Parser\TablePopulator;
@@ -31,8 +32,8 @@ class SchemaParserTest extends TestCase
 
     public function testExtractSchemasWithSchemasAndTablesReturnsTheInput()
     {
-        $schema1 = Mockery::mock(Config\SchemaConfigInterface::class);
-        $schema2 = Mockery::mock(Config\SchemaConfigInterface::class);
+        $schema1 = Mockery::mock(SchemaConfigInterface::class);
+        $schema2 = Mockery::mock(SchemaConfigInterface::class);
         $this->config->allows()
                      ->getSchemaConfiguration('schema1')
                      ->andReturns($schema1);
@@ -80,8 +81,8 @@ class SchemaParserTest extends TestCase
 
     public function testExtractSchemasWithSchemasOnlyHasEmptyTables()
     {
-        $schema1 = Mockery::mock(Config\SchemaConfigInterface::class);
-        $schema2 = Mockery::mock(Config\SchemaConfigInterface::class);
+        $schema1 = Mockery::mock(SchemaConfigInterface::class);
+        $schema2 = Mockery::mock(SchemaConfigInterface::class);
         $this->config->allows()
                      ->getSchemaConfiguration('schema1')
                      ->andReturns($schema1);
@@ -129,8 +130,8 @@ class SchemaParserTest extends TestCase
 
     public function testExtractSchemasWithMixedSchemasHasEmptyTables()
     {
-        $schema1 = Mockery::mock(Config\SchemaConfigInterface::class);
-        $schema2 = Mockery::mock(Config\SchemaConfigInterface::class);
+        $schema1 = Mockery::mock(SchemaConfigInterface::class);
+        $schema2 = Mockery::mock(SchemaConfigInterface::class);
         $this->config->allows()
                      ->getSchemaConfiguration('schema1')
                      ->andReturns($schema1);
@@ -178,8 +179,8 @@ class SchemaParserTest extends TestCase
 
     public function testExtractSchemasWithNoSchemasLooksForAllSchemas()
     {
-        $schema1 = Mockery::mock(Config\SchemaConfigInterface::class);
-        $schema2 = Mockery::mock(Config\SchemaConfigInterface::class);
+        $schema1 = Mockery::mock(SchemaConfigInterface::class);
+        $schema2 = Mockery::mock(SchemaConfigInterface::class);
 
         $this->config->allows()
                      ->get('schemas')

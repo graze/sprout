@@ -2,7 +2,8 @@
 
 namespace Graze\Sprout\Parser;
 
-use Graze\Sprout\Config;
+use Graze\Sprout\Config\Config;
+use Graze\Sprout\Config\SchemaConfigInterface;
 
 class SchemaParser
 {
@@ -36,7 +37,7 @@ class SchemaParser
     {
         if (count($schemaTables) === 0) {
             $schemaTables = array_map(
-                function (Config\SchemaConfigInterface $schemaConfig) {
+                function (SchemaConfigInterface $schemaConfig) {
                     return $schemaConfig->getSchema();
                 },
                 $this->config->get(Config::CONFIG_SCHEMAS)
