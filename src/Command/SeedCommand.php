@@ -99,7 +99,7 @@ class SeedCommand extends Command
             }
         }
 
-        $tablePopulator = new TablePopulator(new Local('.'));
+        $tablePopulator = new TablePopulator(new Local('/'));
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
@@ -117,10 +117,11 @@ class SeedCommand extends Command
 
         foreach ($parsedSchemas as $schema) {
             $output->writeln(sprintf(
-                'Seeding <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info>',
+                'Seeding <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info> from <info>%s</info>',
                 count($schema->getTables()),
                 $schema->getSchemaName(),
-                $group
+                $group,
+                $schema->getPath()
             ));
 
             if ($useGlobal) {
