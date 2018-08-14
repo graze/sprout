@@ -517,7 +517,7 @@ sprout.</p>
 <p>You will need to mount your configuration and seed data:</p>
 <h2 id="command-line">Command Line<a class="headerlink" href="#command-line" title="Permanent link">&para;</a></h2>
 <p>This will run sprout with seed data in the default <code>/seed</code> path.</p>
-<div class="codehilite"><pre><span></span>docker run --rm -v <span class="nv">$$</span><span class="o">(</span><span class="nb">pwd</span><span class="o">)</span>/config/sprout:/app/config -v <span class="nv">$$</span><span class="o">(</span><span class="nb">pwd</span><span class="o">)</span>/seed:/seed graze/sprout <span class="o">[</span>command<span class="o">]</span>
+<div class="codehilite"><pre><span></span>docker run --rm -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/config/sprout:/app/config -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/seed:/seed graze/sprout <span class="o">[</span>command<span class="o">]</span>
 </pre></div>
 
 <h2 id="docker-compose">Docker Compose<a class="headerlink" href="#docker-compose" title="Permanent link">&para;</a></h2>
