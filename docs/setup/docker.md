@@ -13,7 +13,7 @@ You will need to mount your configuration and seed data:
 This will run sprout with seed data in the default `/seed` path.
 
 ```bash
-docker run --rm -v $$(pwd)/config/sprout:/app/config -v $$(pwd)/seed:/seed graze/sprout [command]
+docker run --rm -v $(pwd)/config/sprout:/app/config -v $(pwd)/seed:/seed graze/sprout [command]
 ```
 
 ## Docker Compose
