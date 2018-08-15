@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,10 +15,11 @@ namespace Graze\Sprout\Test\Unit\Seed;
 
 use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
-use Graze\Sprout\Seed\Mysql\MysqlTableSeeder;
+use Graze\Sprout\Db\Mysql\MysqlTableSeeder;
 use Graze\Sprout\Seed\TableSeederFactory;
 use Graze\Sprout\Seed\TableSeederInterface;
 use Graze\Sprout\Test\TestCase;
+use League\Flysystem\AdapterInterface;
 use Mockery;
 use Psr\Log\LoggerInterface;
 
@@ -32,7 +33,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $seederFactory = new TableSeederFactory($processTable);
+        $fileSystem = Mockery::mock(AdapterInterface::class);
+
+        $seederFactory = new TableSeederFactory($processTable, $fileSystem);
 
         $tableSeeder = $seederFactory->getSeeder($config);
 
@@ -51,7 +54,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $seederFactory = new TableSeederFactory($processTable);
+        $fileSystem = Mockery::mock(AdapterInterface::class);
+
+        $seederFactory = new TableSeederFactory($processTable, $fileSystem);
 
         $seederFactory->getSeeder($config);
     }
@@ -64,7 +69,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $seederFactory = new TableSeederFactory($pool);
+        $fileSystem = Mockery::mock(AdapterInterface::class);
+
+        $seederFactory = new TableSeederFactory($pool, $fileSystem);
         $seederFactory->setLogger($logger);
 
         $logger->allows()

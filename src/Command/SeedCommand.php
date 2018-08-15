@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,9 +17,9 @@ use Exception;
 use Graze\ParallelProcess\Pool;
 use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\Config;
+use Graze\Sprout\Parser\FileTablePopulator;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
-use Graze\Sprout\Parser\TablePopulator;
 use Graze\Sprout\Seed\Seeder;
 use Graze\Sprout\Seed\TableSeederFactory;
 use League\Flysystem\Adapter\Local;
@@ -34,6 +34,7 @@ class SeedCommand extends Command
 {
     const OPTION_CONFIG          = 'config';
     const OPTION_NO_CHOP         = 'no-chop';
+    const OPTION_CHOP_ALL        = 'chop-all';
     const OPTION_GROUP           = 'group';
     const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
 
@@ -54,7 +55,15 @@ class SeedCommand extends Command
             static::OPTION_NO_CHOP,
             '',
             InputOption::VALUE_NONE,
-            'do not chop (truncate) tables before seeding them'
+            'Do not chop (truncate) tables before seeding them'
+        );
+        $this->addOption(
+            static::OPTION_CHOP_ALL,
+            '',
+            InputOption::VALUE_NONE,
+            'Truncate all of the tables in the database. '
+            . 'Any tables in the excludes list in the configuration will be ignored.'
+            . 'If the `--no-chop` option is set, this will have no effect.'
         );
 
         $this->addOption(
@@ -91,6 +100,7 @@ class SeedCommand extends Command
                     static::ARGUMENT_SCHEMA_TABLES => $schemas,
                     '--' . static::OPTION_CONFIG   => $input->getOption(static::OPTION_CONFIG),
                     '--' . static::OPTION_GROUP    => $group,
+                    '--' . ChopCommand::OPTION_ALL => $input->getOption(static::OPTION_CHOP_ALL),
                 ]),
                 $output
             );
@@ -99,7 +109,8 @@ class SeedCommand extends Command
             }
         }
 
-        $tablePopulator = new TablePopulator(new Local('/'));
+        $fileSystem = new Local('/');
+        $tablePopulator = new FileTablePopulator($fileSystem);
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
@@ -136,7 +147,7 @@ class SeedCommand extends Command
                 $globalPool->add($pool);
             }
 
-            $seeder = new Seeder($schema->getSchemaConfig(), $output, new TableSeederFactory($pool));
+            $seeder = new Seeder($schema->getSchemaConfig(), $output, new TableSeederFactory($pool, $fileSystem));
             $seeder->seed($schema->getPath(), $schema->getTables());
         }
 

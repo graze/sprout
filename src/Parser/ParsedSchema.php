@@ -1,4 +1,15 @@
 <?php
+/**
+ * This file is part of graze/sprout.
+ *
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license https://github.com/graze/sprout/blob/master/LICENSE.md
+ * @link    https://github.com/graze/sprout
+ */
 
 namespace Graze\Sprout\Parser;
 
@@ -10,7 +21,7 @@ class ParsedSchema
     private $schemaConfig;
     /** @var string */
     private $path;
-    /** @var array */
+    /** @var string[] */
     private $tables;
 
     /**
@@ -18,7 +29,7 @@ class ParsedSchema
      *
      * @param SchemaConfigInterface $schemaConfig
      * @param string                $path
-     * @param array                 $tables
+     * @param string[]              $tables
      */
     public function __construct(SchemaConfigInterface $schemaConfig, string $path, array $tables)
     {
@@ -44,7 +55,7 @@ class ParsedSchema
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getTables(): array
     {
@@ -52,7 +63,7 @@ class ParsedSchema
     }
 
     /**
-     * @param array $tables
+     * @param string[] $tables
      *
      * @return ParsedSchema
      */

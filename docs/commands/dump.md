@@ -72,7 +72,7 @@ sprout dump schema1:table1,table2 schema2:table3
 ## Groups
 
 The optional `--group` option allows you to specify which group the following dump will belong to. If this is not
-supplied it will use the default value as defined in the [configuration file](setup/configuration.md).
+supplied it will use the default value as defined in the [configuration file](../setup/configuration.md).
 
 See [Creating grouped seed data](../groups.md#creating-grouped-seed-data) for more information on how to dump data into
 groups.

@@ -1,4 +1,15 @@
 <?php
+/**
+ * This file is part of graze/sprout.
+ *
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license https://github.com/graze/sprout/blob/master/LICENSE.md
+ * @link    https://github.com/graze/sprout
+ */
 
 namespace Graze\Sprout\Parser;
 
@@ -11,17 +22,17 @@ class SchemaParser
     private $config;
     /** @var null|string */
     private $group;
-    /** @var TablePopulator */
+    /** @var TablePopulatorInterface */
     private $populator;
 
     /**
      * SchemaParser constructor.
      *
-     * @param TablePopulator $populator
-     * @param Config         $config
-     * @param string|null    $group
+     * @param TablePopulatorInterface $populator
+     * @param Config                  $config
+     * @param string|null             $group
      */
-    public function __construct(TablePopulator $populator, Config $config, string $group = null)
+    public function __construct(TablePopulatorInterface $populator, Config $config, string $group = null)
     {
         $this->populator = $populator;
         $this->config = $config;

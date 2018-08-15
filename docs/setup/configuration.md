@@ -43,6 +43,14 @@ schemas:
     # [optional, string] A custom directory name for this schema, only required if it is different from the `schema` value
     dirName: directory
 
+    # [optional, array[string]] A list of tables (as regular expressions) to exclude from actions
+    exclude:
+      - 'table1'
+      - 'table2'
+      - 'migrations'
+      - 'table[456]'
+      - '/^table_\d{4}/'
+
     # [required] Connection details
     connection: &default_connection
 
@@ -78,9 +86,13 @@ This is a minimal configuration file with a single schema and connection
 ```yaml
 schemas:
   first_schema:
-    connection: &connection
+    connection:
       host: db
       driver: mysql
       user: root
       password: rootpassword
 ```
+
+## Excludes
+
+See the [excludes](../excludes.md) page for more information of the effect of exclusion.

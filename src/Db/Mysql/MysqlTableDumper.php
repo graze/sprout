@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,15 +11,14 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Chop\Mysql;
+namespace Graze\Sprout\Db\Mysql;
 
 use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
-use Graze\Sprout\Chop\TableChopperInterface;
 use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Dump\TableDumperInterface;
 use Symfony\Component\Process\Process;
 
-class MysqlTableChopper implements TableChopperInterface
+class MysqlTableDumper implements TableDumperInterface
 {
     /** @var ConnectionConfigInterface */
     private $connection;
@@ -41,21 +40,25 @@ class MysqlTableChopper implements TableChopperInterface
     /**
      * @param string $schema
      * @param string $table
+     * @param string $file
      */
-    public function chop(string $schema, string $table)
+    public function dump(string $schema, string $table, string $file)
     {
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
-                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 --execute=%5$s %4$s',
+                'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info' .
+                ' --extended-insert --hex-blob --quick --complete-insert %4$s %5$s ' .
+                '| process-mysqldump > %6$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),
                 escapeshellarg($schema),
-                escapeshellarg(sprintf('TRUNCATE `%s`', $table))
+                escapeshellarg($table),
+                escapeshellarg($file)
             )
         );
 
-        $this->pool->add($process, ['chop', 'schema' => $schema, 'table' => $table]);
+        $this->pool->add($process, ['dump', 'schema' => $schema, 'table' => $table]);
     }
 }

@@ -3,7 +3,7 @@
 The chop command has the following structure:
 
 ```bash
-sprout chop [--config=<path>] [--group=<group>] [<schema>[:<table>,...]] ...
+sprout chop [--config=<path>] [--group=<group>] [--all] <schema>[:<table>,...]] ...
 ```
 
 This will truncate the contents of all the specified tables.
@@ -29,7 +29,7 @@ If no tables are defined for a schema, all tables on the filesystem will be trun
 
 ### Chopping all the data
 
-You can truncate all the tables that exist locally if you do not specify and schemas or tables.
+You can truncate all the tables that have seed data for if you do not specify and schemas or tables.
 
 ```bash
 sprout chop
@@ -65,6 +65,17 @@ You can also specify multiple schemas, each with their own set of tables
 ```bash
 sprout chop schema1:table1,table2 schema2:table3
 ```
+
+### Chopping all the tables in the database
+
+You can truncate all the tables (not just the ones you have seed data for) but using the `--add` flag.
+
+```bash
+sprout chop --all
+sprout chop --all schema1 schema2
+```
+
+If you specify schema with tables `schema1:table1,table2`, it will only use the tables specified and not any others.
 
 ## Groups
 

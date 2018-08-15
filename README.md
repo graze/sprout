@@ -73,14 +73,16 @@ sprout seed --config=config/sprout.yml --group=static
 sprout seed [--config=<path>] [--group=<group>] [--chop] [<schema>[:<table>,...]] ...
 
 sprout seed --config=config/sprout.yml the_schema
-sprout seed --config=config/sprout.yml --chop the_schema
+sprout seed --config=config/sprout.yml --chop-all the_schema
+sprout seed --config=config/sprout.yml --no-chop the_schema
 
 sprout seed --config=config/sprout.yml the_schema:country
-sprout seed --config=config/sprout.yml --chop the_schema:country other_schema:planets
+sprout seed --config=config/sprout.yml --no-chop the_schema:country other_schema:planets
 
 sprout seed --config=config/sprout.yml --group=core
 sprout seed --config=config/sprout.yml --group=core the_schema
-sprout seed --config=config/sprout.yml --chop --group=extra
+sprout seed --config=config/sprout.yml --no-chop --group=extra
+sprout seed --config=config/sprout.yml --chop-all --group=extra
 ```
 
 ### Truncating the data from all the tables in a schema
@@ -90,9 +92,11 @@ sprout chop [--config=<path>] [--group=<group>] [<schema>[:<table>,...]] ...
 
 sprout chop --config=config/sprout.yml the_schema
 sprout chop --config=config/sprout.yml the_schema:country
+sprout chop --config=config/sprout.yml --all the_schema
 
 sprout chop --config=config/sprout.yml --group=core the_schema
 sprout chop --config=config/sprout.yml --group=extra the_schema:country
+sprout chop --config=config/sprout.yml --group=extra --all
 ```
 
 ### Dumping the data from all tables in a schema

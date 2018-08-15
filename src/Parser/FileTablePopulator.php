@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,19 +15,23 @@ namespace Graze\Sprout\Parser;
 
 use League\Flysystem\AdapterInterface;
 
-class TablePopulator
+class FileTablePopulator implements TablePopulatorInterface
 {
     /** @var AdapterInterface */
     private $filesystem;
+    /** @var TableFilterer */
+    private $tableFilterer;
 
     /**
      * SchemaParser constructor.
      *
-     * @param AdapterInterface $filesystem
+     * @param AdapterInterface   $filesystem
+     * @param TableFilterer|null $tableFilterer
      */
-    public function __construct(AdapterInterface $filesystem)
+    public function __construct(AdapterInterface $filesystem, TableFilterer $tableFilterer = null)
     {
         $this->filesystem = $filesystem;
+        $this->tableFilterer = $tableFilterer ?: new TableFilterer();
     }
 
     /**
@@ -60,13 +64,22 @@ class TablePopulator
                 }
             );
 
-            // remove the file extensions to get the table names
-            $parsedSchema->setTables(array_map(
+            $tables = array_map(
                 function (array $file) {
                     return pathinfo($file['path'], PATHINFO_FILENAME);
                 },
                 $files
-            ));
+            );
+
+            if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
+                $tables = $this->tableFilterer->filter(
+                    $tables,
+                    $parsedSchema->getSchemaConfig()->getExcludes()
+                );
+            }
+
+            // remove the file extensions to get the table names
+            $parsedSchema->setTables($tables);
         }
 
         if (count($parsedSchema->getTables()) === 0) {

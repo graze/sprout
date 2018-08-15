@@ -1,4 +1,15 @@
 <?php
+/**
+ * This file is part of graze/sprout.
+ *
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @license https://github.com/graze/sprout/blob/master/LICENSE.md
+ * @link    https://github.com/graze/sprout
+ */
 
 namespace Graze\Sprout\Test\Unit\Parser;
 
@@ -6,7 +17,7 @@ use Graze\Sprout\Config\Config;
 use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
-use Graze\Sprout\Parser\TablePopulator;
+use Graze\Sprout\Parser\FileTablePopulator;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 
@@ -21,7 +32,7 @@ class SchemaParserTest extends TestCase
 
     public function setUp()
     {
-        $this->tablePopulator = Mockery::mock(TablePopulator::class);
+        $this->tablePopulator = Mockery::mock(FileTablePopulator::class);
         $this->config = Mockery::mock(Config::class);
         $this->schemaParser = new SchemaParser(
             $this->tablePopulator,

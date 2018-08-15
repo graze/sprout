@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,7 +21,7 @@ use Graze\Sprout\Dump\Dumper;
 use Graze\Sprout\Dump\TableDumperFactory;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
-use Graze\Sprout\Parser\TablePopulator;
+use Graze\Sprout\Parser\FileTablePopulator;
 use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -74,7 +74,7 @@ class DumpCommand extends Command
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
         $fileSystem = new Local('/');
-        $tablePopulator = new TablePopulator($fileSystem);
+        $tablePopulator = new FileTablePopulator($fileSystem);
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 

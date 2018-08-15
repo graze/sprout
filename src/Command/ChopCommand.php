@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,9 +18,10 @@ use Graze\ParallelProcess\Table;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config\Config;
+use Graze\Sprout\Db\DbTablePopulator;
+use Graze\Sprout\Parser\FileTablePopulator;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\SchemaParser;
-use Graze\Sprout\Parser\TablePopulator;
 use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,6 +33,7 @@ class ChopCommand extends Command
 {
     const OPTION_GROUP  = 'group';
     const OPTION_CONFIG = 'config';
+    const OPTION_ALL    = 'all';
 
     const ARGUMENT_SCHEMA_TABLES = 'schemaTables';
 
@@ -56,6 +58,15 @@ class ChopCommand extends Command
             'The group to truncate'
         );
 
+        $this->addOption(
+            static::OPTION_ALL,
+            'a',
+            InputOption::VALUE_NONE,
+            'Truncate all the tables in the schemas, '
+            . 'if you specify tables in the <schemaTables> only those will be used. '
+            . 'If this is not supplied only the files with seed data will be truncated'
+        );
+
         $this->addArgument(
             static::ARGUMENT_SCHEMA_TABLES,
             InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
@@ -76,7 +87,9 @@ class ChopCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $tablePopulator = new TablePopulator(new Local('/'));
+        $tablePopulator = $input->getOption(static::OPTION_CONFIG)
+            ? new DbTablePopulator()
+            : new FileTablePopulator(new Local('/'));
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
