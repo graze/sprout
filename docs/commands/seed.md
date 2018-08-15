@@ -3,7 +3,7 @@
 The seed command has the following structure:
 
 ```bash
-sprout seed [--config=<path>] [--no-chop] [--group=<group>] [<schema>[:<table>,...]] ...
+sprout seed [--config=<path>] [--no-chop] [--chop-all] [--group=<group>] [<schema>[:<table>,...]] ...
 ```
 
 This will dump the contents of a table to a related file in the specified group as a collection of sql insert
@@ -21,6 +21,11 @@ called `config/sprout.yml`. The location is relative to the working directory. W
 
 By default the seed command will truncate all the relevant tables. To prevent this you can specify the `--no-chop`
 option.
+
+## Truncate all the tables
+
+To truncate all the tables in the schema instead of just the tables you want to seed, you can use the option `--chop-all`.
+This is the equivalent to the `--all` option on the `chop` command.
 
 ## Schema and Table configuration
 
@@ -49,6 +54,12 @@ sprout seed schema1
 ```
 
 This will chop (truncate) and seed all the tables that exist on the filesystem in the schema: `schema1`.
+
+You can truncate all the tables in the schema, not just the ones you wish to seed.
+
+```bash
+sprout seed --chop-all schema1
+```
 
 If you do not wish to truncate the tables first, you can use:
 
