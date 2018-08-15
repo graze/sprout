@@ -424,6 +424,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#chopping-all-the-tables-in-the-database" title="Chopping all the tables in the database" class="md-nav__link">
+    Chopping all the tables in the database
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -472,6 +479,18 @@
   <li class="md-nav__item">
     <a href="../../schemas_tables/" title="Schemas and Tables" class="md-nav__link">
       Schemas and Tables
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../excludes/" title="Excludes" class="md-nav__link">
+      Excludes
     </a>
   </li>
 
@@ -532,6 +551,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#chopping-all-the-tables-in-the-database" title="Chopping all the tables in the database" class="md-nav__link">
+    Chopping all the tables in the database
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -565,7 +591,7 @@
                 
                 <h1 id="truncating-data-chop">Truncating Data (Chop)<a class="headerlink" href="#truncating-data-chop" title="Permanent link">&para;</a></h1>
 <p>The chop command has the following structure:</p>
-<div class="codehilite"><pre><span></span>sprout chop <span class="o">[</span>--config<span class="o">=</span>&lt;path&gt;<span class="o">]</span> <span class="o">[</span>--group<span class="o">=</span>&lt;group&gt;<span class="o">]</span> <span class="o">[</span>&lt;schema&gt;<span class="o">[</span>:&lt;table&gt;,...<span class="o">]]</span> ...
+<div class="codehilite"><pre><span></span>sprout chop <span class="o">[</span>--config<span class="o">=</span>&lt;path&gt;<span class="o">]</span> <span class="o">[</span>--group<span class="o">=</span>&lt;group&gt;<span class="o">]</span> <span class="o">[</span>--all<span class="o">]</span> &lt;schema&gt;<span class="o">[</span>:&lt;table&gt;,...<span class="o">]]</span> ...
 </pre></div>
 
 <p>This will truncate the contents of all the specified tables.</p>
@@ -584,7 +610,7 @@ a set of tables or not.</p>
 <p>If no schema is defined, all the schemas and tables that are on the filesystem in a group will be truncated.
 If no tables are defined for a schema, all tables on the filesystem will be truncated.</p>
 <h3 id="chopping-all-the-data">Chopping all the data<a class="headerlink" href="#chopping-all-the-data" title="Permanent link">&para;</a></h3>
-<p>You can truncate all the tables that exist locally if you do not specify and schemas or tables.</p>
+<p>You can truncate all the tables that have seed data for if you do not specify and schemas or tables.</p>
 <div class="codehilite"><pre><span></span>sprout chop
 </pre></div>
 
@@ -608,6 +634,13 @@ after the schema they apply to.</p>
 <div class="codehilite"><pre><span></span>sprout chop schema1:table1,table2 schema2:table3
 </pre></div>
 
+<h3 id="chopping-all-the-tables-in-the-database">Chopping all the tables in the database<a class="headerlink" href="#chopping-all-the-tables-in-the-database" title="Permanent link">&para;</a></h3>
+<p>You can truncate all the tables (not just the ones you have seed data for) but using the <code>--add</code> flag.</p>
+<div class="codehilite"><pre><span></span>sprout chop --all
+sprout chop --all schema1 schema2
+</pre></div>
+
+<p>If you specify schema with tables <code>schema1:table1,table2</code>, it will only use the tables specified and not any others.</p>
 <h2 id="groups">Groups<a class="headerlink" href="#groups" title="Permanent link">&para;</a></h2>
 <p>The optional <code>--group</code> option allows you to specify which group to read the seed data from. If this is not
 supplied it will use the default value as defined in the <a href="../../setup/configuration/">configuration file</a>.</p>

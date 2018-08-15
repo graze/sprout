@@ -318,6 +318,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#excludes" title="Excludes" class="md-nav__link">
+    Excludes
+  </a>
+  
+</li>
+      
       
       
       
@@ -442,6 +449,18 @@
   </li>
 
     
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../excludes/" title="Excludes" class="md-nav__link">
+      Excludes
+    </a>
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -472,6 +491,13 @@
         <li class="md-nav__item">
   <a href="#minimal-configuration-file" title="Minimal Configuration File" class="md-nav__link">
     Minimal Configuration File
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#excludes" title="Excludes" class="md-nav__link">
+    Excludes
   </a>
   
 </li>
@@ -535,6 +561,14 @@ using <code>--config=path/to/file.yml</code>. This file is relative to the curre
     <span class="c1"># [optional, string] A custom directory name for this schema, only required if it is different from the `schema` value</span>
     <span class="l l-Scalar l-Scalar-Plain">dirName</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">directory</span>
 
+    <span class="c1"># [optional, array[string]] A list of tables (as regular expressions) to exclude from actions</span>
+    <span class="l l-Scalar l-Scalar-Plain">exclude</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;table1&#39;</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;table2&#39;</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;migrations&#39;</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;table[456]&#39;</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;/^table_\d{4}/&#39;</span>
+
     <span class="c1"># [required] Connection details</span>
     <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span> <span class="nl">&amp;default_connection</span>
 
@@ -567,12 +601,15 @@ using <code>--config=path/to/file.yml</code>. This file is relative to the curre
 <p>This is a minimal configuration file with a single schema and connection</p>
 <div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">schemas</span><span class="p p-Indicator">:</span>
   <span class="l l-Scalar l-Scalar-Plain">first_schema</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span> <span class="nl">&amp;connection</span>
+    <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span>
       <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
       <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
       <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
       <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rootpassword</span>
 </pre></div>
+
+<h2 id="excludes">Excludes<a class="headerlink" href="#excludes" title="Permanent link">&para;</a></h2>
+<p>See the <a href="../../excludes/">excludes</a> page for more information of the effect of exclusion.</p>
                 
                   
                 

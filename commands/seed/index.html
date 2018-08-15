@@ -379,6 +379,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#truncate-all-the-tables" title="Truncate all the tables" class="md-nav__link">
+    Truncate all the tables
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#schema-and-table-configuration" title="Schema and Table configuration" class="md-nav__link">
     Schema and Table configuration
   </a>
@@ -483,6 +490,18 @@
   </li>
 
     
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../excludes/" title="Excludes" class="md-nav__link">
+      Excludes
+    </a>
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -513,6 +532,13 @@
         <li class="md-nav__item">
   <a href="#prevent-truncation" title="Prevent truncation" class="md-nav__link">
     Prevent truncation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#truncate-all-the-tables" title="Truncate all the tables" class="md-nav__link">
+    Truncate all the tables
   </a>
   
 </li>
@@ -579,7 +605,7 @@
                 
                 <h1 id="seeding-data">Seeding Data<a class="headerlink" href="#seeding-data" title="Permanent link">&para;</a></h1>
 <p>The seed command has the following structure:</p>
-<div class="codehilite"><pre><span></span>sprout seed <span class="o">[</span>--config<span class="o">=</span>&lt;path&gt;<span class="o">]</span> <span class="o">[</span>--no-chop<span class="o">]</span> <span class="o">[</span>--group<span class="o">=</span>&lt;group&gt;<span class="o">]</span> <span class="o">[</span>&lt;schema&gt;<span class="o">[</span>:&lt;table&gt;,...<span class="o">]]</span> ...
+<div class="codehilite"><pre><span></span>sprout seed <span class="o">[</span>--config<span class="o">=</span>&lt;path&gt;<span class="o">]</span> <span class="o">[</span>--no-chop<span class="o">]</span> <span class="o">[</span>--chop-all<span class="o">]</span> <span class="o">[</span>--group<span class="o">=</span>&lt;group&gt;<span class="o">]</span> <span class="o">[</span>&lt;schema&gt;<span class="o">[</span>:&lt;table&gt;,...<span class="o">]]</span> ...
 </pre></div>
 
 <p>This will dump the contents of a table to a related file in the specified group as a collection of sql insert
@@ -594,6 +620,9 @@ called <code>config/sprout.yml</code>. The location is relative to the working d
 <h2 id="prevent-truncation">Prevent truncation<a class="headerlink" href="#prevent-truncation" title="Permanent link">&para;</a></h2>
 <p>By default the seed command will truncate all the relevant tables. To prevent this you can specify the <code>--no-chop</code>
 option.</p>
+<h2 id="truncate-all-the-tables">Truncate all the tables<a class="headerlink" href="#truncate-all-the-tables" title="Permanent link">&para;</a></h2>
+<p>To truncate all the tables in the schema instead of just the tables you want to seed, you can use the option <code>--chop-all</code>.
+This is the equivalent to the <code>--all</code> option on the <code>chop</code> command.</p>
 <h2 id="schema-and-table-configuration">Schema and Table configuration<a class="headerlink" href="#schema-and-table-configuration" title="Permanent link">&para;</a></h2>
 <p>All commands make use of the same <a href="../../schemas_tables/">Schema and Tables</a> parsing.</p>
 <p>The <code>[&lt;schema&gt;[:&lt;table&gt;,...]] ...</code> part of the command line allows you to specify none or some schemas, each schema with
@@ -611,6 +640,10 @@ If no tables are defined for a schema, all tables on the filesystem will be seed
 </pre></div>
 
 <p>This will chop (truncate) and seed all the tables that exist on the filesystem in the schema: <code>schema1</code>.</p>
+<p>You can truncate all the tables in the schema, not just the ones you wish to seed.</p>
+<div class="codehilite"><pre><span></span>sprout seed --chop-all schema1
+</pre></div>
+
 <p>If you do not wish to truncate the tables first, you can use:</p>
 <div class="codehilite"><pre><span></span>sprout seed --no-chop schema1
 </pre></div>
