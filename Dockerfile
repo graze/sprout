@@ -1,24 +1,24 @@
-#FROM alpine as build-c
-#
-#WORKDIR /app
-#COPY dump-parser /app
-#
-#RUN set +xe \
-#    && apk add -u --no-cache --virtual .build-deps \
-#        gcc \
-#        musl-dev \
-#    && gcc -O2 -Wall -pedantic process-mysqldump.c -o process-mysqldump \
-#    && chmod +x process-mysqldump \
-#    && apk del .build-deps
-#
-#FROM composer AS build-php
-#
-#WORKDIR /app
-#COPY src /app/src
-#COPY composer.json /app/composer.json
-#COPY composer.lock /app/composer.lock
-#
-#RUN composer install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader --prefer-dist
+FROM alpine as build-c
+
+WORKDIR /app
+COPY dump-parser /app
+
+RUN set +xe \
+    && apk add -u --no-cache --virtual .build-deps \
+        gcc \
+        musl-dev \
+    && gcc -O2 -Wall -pedantic process-mysqldump.c -o process-mysqldump \
+    && chmod +x process-mysqldump \
+    && apk del .build-deps
+
+FROM composer AS build-php
+
+WORKDIR /app
+COPY src /app/src
+COPY composer.json /app/composer.json
+COPY composer.lock /app/composer.lock
+
+RUN composer install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader --prefer-dist
 
 FROM graze/php-alpine:7.2 AS run
 
@@ -27,12 +27,10 @@ RUN set +xe \
         mariadb-client
 
 WORKDIR /app
-#COPY --from=build-php /app/src /app/src
-#COPY --from=build-php /app/vendor /app/vendor
-COPY src /app/src
-COPY vendor /app/vendor
+COPY --from=build-php /app/src /app/src
+COPY --from=build-php /app/vendor /app/vendor
 COPY bin /app/bin
-#COPY --from=build-c /app/process-mysqldump /bin/process-mysqldump
+COPY --from=build-c /app/process-mysqldump /bin/process-mysqldump
 
 ARG BUILD_DATE
 ARG VCS_REF
