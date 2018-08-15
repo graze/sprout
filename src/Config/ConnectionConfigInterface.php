@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,4 +28,6 @@ interface ConnectionConfigInterface
     public function getPassword(): string;
 
     public function getDbName(): string;
+
+    public function getDsn(): string;
 }

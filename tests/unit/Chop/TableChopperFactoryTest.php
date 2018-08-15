@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,10 +14,10 @@
 namespace Graze\Sprout\Test\Unit\Chop;
 
 use Graze\ParallelProcess\Pool;
-use Graze\Sprout\Chop\Mysql\MysqlTableChopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Chop\TableChopperInterface;
 use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Db\Mysql\MysqlTableChopper;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 use Psr\Log\LoggerInterface;

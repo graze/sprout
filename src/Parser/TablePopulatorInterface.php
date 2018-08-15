@@ -11,18 +11,16 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Seed;
+namespace Graze\Sprout\Parser;
 
-interface TableSeederInterface
+interface TablePopulatorInterface
 {
     /**
-     * Take a file, and write the contents into the table within the specified schema
+     * Populate the tables in a `ParsedSchema`
      *
-     * @param string $file
-     * @param string $schema
-     * @param string $table
+     * @param ParsedSchema $parsedSchema
      *
-     * @return void
+     * @return ParsedSchema
      */
-    public function seed(string $file, string $schema, string $table);
+    public function populateTables(ParsedSchema $parsedSchema): ParsedSchema;
 }

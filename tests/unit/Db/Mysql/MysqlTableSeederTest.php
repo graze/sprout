@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,12 +11,13 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Seed\Mysql;
+namespace Graze\Sprout\Test\Unit\Db\Mysql;
 
 use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
 use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Db\Mysql\MysqlTableSeeder;
 use Graze\Sprout\Test\TestCase;
+use League\Flysystem\AdapterInterface;
 use Mockery;
 use Symfony\Component\Process\Process;
 
@@ -26,8 +27,6 @@ use Symfony\Component\Process\Process;
  */
 class MysqlTableSeederTest extends TestCase
 {
-    // our standards don't handle sub functions properly, until this is fixed
-    // @codingStandardsIgnoreStart
     public function testSeed()
     {
         $process = Mockery::mock('overload:' . Process::class);
@@ -52,22 +51,15 @@ class MysqlTableSeederTest extends TestCase
                  ['seed', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
-        $tableSeeder = new MysqlTableSeeder($pool, $config);
+        $fileSystem = Mockery::mock(AdapterInterface::class);
+        $fileSystem->allows()
+                   ->has('some-file')
+                   ->andReturns(true);
 
-        /**
-         * @param string $file
-         *
-         * @return bool
-         */
-        function file_exists($file)
-        {
-            TestCase::assertEquals('some-file', $file);
-            return true;
-        }
+        $tableSeeder = new MysqlTableSeeder($pool, $config, $fileSystem);
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * @expectedException \InvalidArgumentException
@@ -76,22 +68,12 @@ class MysqlTableSeederTest extends TestCase
     {
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $pool = Mockery::mock(Pool::class);
+        $fileSystem = Mockery::mock(AdapterInterface::class);
+        $fileSystem->allows()
+                   ->has('some-file')
+                   ->andReturns(false);
 
-        $tableSeeder = new MysqlTableSeeder($pool, $config);
-
-        // @codingStandardsIgnoreStart
-        /**
-         * @param string $file
-         *
-         * @return bool
-         */
-        function file_exists($file)
-        {
-            TestCase::assertEquals('some-file', $file);
-            return false;
-        }
-
-        // @codingStandardsIgnoreEnd
+        $tableSeeder = new MysqlTableSeeder($pool, $config, $fileSystem);
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }

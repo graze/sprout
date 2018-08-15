@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,10 +11,11 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Chop\Mysql;
+namespace Graze\Sprout\Test\Unit\Db\Mysql;
 
 use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Db\Mysql\MysqlTableDumper;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 use Symfony\Component\Process\Process;
@@ -23,14 +24,18 @@ use Symfony\Component\Process\Process;
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  */
-class MysqlTableChopperTest extends TestCase
+class MysqlTableDumperTest extends TestCase
 {
-    public function testChop()
+    public function testDump()
     {
         $process = Mockery::mock('overload:' . Process::class);
 
         $process->shouldReceive('setCommandLine')
-                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'TRUNCATE `some-table`\' \'some-schema\'')
+                ->with(
+                    'mysqldump -h\'some-host\' -u\'some-user\' -p\'some-pass\' --compress --compact --no-create-info' .
+                    ' --extended-insert --hex-blob --quick --complete-insert \'some-schema\' \'some-table\' ' .
+                    '| process-mysqldump > \'some-file\''
+                )
                 ->once();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
@@ -46,11 +51,11 @@ class MysqlTableChopperTest extends TestCase
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['chop', 'schema' => 'some-schema', 'table' => 'some-table']
+                 ['dump', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
-        $tableChopper = new MysqlTableChopper($pool, $config);
+        $tableDumper = new MysqlTableDumper($pool, $config);
 
-        $tableChopper->chop('some-schema', 'some-table');
+        $tableDumper->dump('some-schema', 'some-table', 'some-file');
     }
 }

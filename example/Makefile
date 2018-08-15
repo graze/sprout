@@ -12,6 +12,10 @@ seed: ## Seed the data for the database
 seed: start-db
 	docker-compose run --rm sprout seed the_schema -v
 
+seed-chop-all: ## Seed the data for the database
+seed-chop-all: start-db
+	docker-compose run --rm sprout seed --chop-all the_schema -v
+
 seed-group: ## Seed the data in a group for a database
 seed-group: start-db
 	docker-compose run --rm sprout seed --group=core -v
@@ -23,6 +27,10 @@ chop: start-db
 chop-group: ## Truncate the data in the database
 chop-group: start-db
 	docker-compose run --rm sprout chop --group=core -v
+
+chop: ## Truncate the data in the database
+chop-all: start-db
+	docker-compose run --rm sprout chop --all -v
 
 dump: ## Dump the data from a table
 dump: start-db

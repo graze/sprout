@@ -2,7 +2,7 @@
 /**
  * This file is part of graze/sprout.
  *
- * Copyright (c) 2017 Nature Delivered Ltd. <https://www.graze.com>
+ * Copyright © 2018 Nature Delivered Ltd. <https://www.graze.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -102,5 +102,19 @@ class ConnectionConfig implements ConnectionConfigInterface
                        ->required('host', v::stringType())
                        ->optional('port', v::intVal(), 3306)
                        ->optional('dbName', v::stringType());
+    }
+
+    /**
+     * @return string
+     */
+    public function getDsn(): string
+    {
+        return sprintf(
+            '%s:dnbame=%s;host=%s;port=%d',
+            $this->getDriver(),
+            $this->getDbName(),
+            $this->getHost(),
+            $this->getPort()
+        );
     }
 }
