@@ -49,6 +49,7 @@ schemas:
       - 'table2'
       - 'migrations'
       - 'table[456]'
+      - '/^table_\d{4}/'
 
     # [required] Connection details
     connection: &default_connection
@@ -91,3 +92,7 @@ schemas:
       user: root
       password: rootpassword
 ```
+
+## Excludes
+
+See the [excludes](../excludes.md) page for more information of the effect of exclusion.

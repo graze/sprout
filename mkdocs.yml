@@ -30,6 +30,7 @@ nav:
     - Chop: 'commands/chop.md'
   - Groups: 'groups.md'
   - 'Schemas and Tables': 'schemas_tables.md'
+  - Excludes: 'excludes.md'
 
 markdown_extensions:
   - admonition:

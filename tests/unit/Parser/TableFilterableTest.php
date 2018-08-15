@@ -49,6 +49,11 @@ class TableFilterableTest extends TestCase
               ['table\d', 'table[1]{2}'],
               ['table12'],
             ],
+            [ // test complex regex
+              ['table1', 'Table2', 'table11', 'table1s'],
+              ['/^table\d{1}(?!\d)/i'],
+              ['table11'],
+            ],
         ];
     }
 }

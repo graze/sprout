@@ -39,7 +39,7 @@ class FileTablePopulator implements TablePopulatorInterface
      *
      * @return ParsedSchema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema): ParsedSchema
+    public function populateTables(ParsedSchema $parsedSchema)
     {
         if (count($parsedSchema->getTables()) === 0) {
             if ($parsedSchema->getPath() === '' || $this->filesystem->has($parsedSchema->getPath()) === false) {
@@ -64,22 +64,22 @@ class FileTablePopulator implements TablePopulatorInterface
                 }
             );
 
-            // remove the file extensions to get the table names
-            $parsedSchema->setTables(array_map(
+            $tables = array_map(
                 function (array $file) {
                     return pathinfo($file['path'], PATHINFO_FILENAME);
                 },
                 $files
-            ));
-        }
-
-        if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
-            $parsedSchema->setTables(
-                $this->tableFilterer->filter(
-                    $parsedSchema->getTables(),
-                    $parsedSchema->getSchemaConfig()->getExcludes()
-                )
             );
+
+            if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
+                $tables = $this->tableFilterer->filter(
+                    $tables,
+                    $parsedSchema->getSchemaConfig()->getExcludes()
+                );
+            }
+
+            // remove the file extensions to get the table names
+            $parsedSchema->setTables($tables);
         }
 
         if (count($parsedSchema->getTables()) === 0) {

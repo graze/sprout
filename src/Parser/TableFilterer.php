@@ -16,7 +16,8 @@ class TableFilterer
             $tables,
             function (string $table) use ($excludes) {
                 foreach ($excludes as $regex) {
-                    if (preg_match(sprintf('/^%s$/', $regex), $table)) {
+                    $regex = mb_substr($regex, 0, 1) === '/' ? $regex : sprintf('/^%s$/', $regex);
+                    if (preg_match($regex, $table)) {
                         return false;
                     }
                 }

@@ -43,7 +43,7 @@ class DbTablePopulator implements TablePopulatorInterface
      *
      * @return ParsedSchema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema): ParsedSchema
+    public function populateTables(ParsedSchema $parsedSchema)
     {
         if (count($parsedSchema->getTables()) === 0) {
             $connection = $parsedSchema->getSchemaConfig()->getConnection();
@@ -60,17 +60,14 @@ class DbTablePopulator implements TablePopulatorInterface
 
             $tables = is_string($tables) ? [$tables] : $tables;
 
-            // filter out any excluded tables
-            $parsedSchema->setTables($tables);
-        }
-
-        if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
-            $parsedSchema->setTables(
-                $this->tableFilterer->filter(
-                    $parsedSchema->getTables(),
+            if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
+                $tables = $this->tableFilterer->filter(
+                    $tables,
                     $parsedSchema->getSchemaConfig()->getExcludes()
-                )
-            );
+                );
+            }
+
+            $parsedSchema->setTables($tables);
         }
 
         if (count($parsedSchema->getTables()) === 0) {

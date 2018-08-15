@@ -94,21 +94,17 @@ class DbTablePopulatorTest extends TestCase
         $this->assertEquals(['table1', 'table2'], $output->getTables());
     }
 
-    public function testTablesAreExcludedIfIncludedInExcludeList()
+    public function testTablesAreNotExcludedIfIncludedInExcludeList()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
         $parsedSchema = new ParsedSchema($config, '/a/path', ['table1', 'table2']);
         $config->allows(['getExcludes' => ['table1']]);
 
-        $this->tableFilterer->allows()
-                            ->filter(['table1', 'table2'], ['table1'])
-                            ->andReturns(['table2']);
-
         $output = $this->tablePopulator->populateTables($parsedSchema);
 
         $this->assertSame($parsedSchema, $output);
 
-        $this->assertEquals(['table2'], $output->getTables());
+        $this->assertEquals(['table1', 'table2'], $output->getTables());
     }
 
     public function testTablesAreFilteredWhenPopulatedFromADatabase()

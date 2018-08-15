@@ -16,11 +16,11 @@ namespace Graze\Sprout\Parser;
 interface TablePopulatorInterface
 {
     /**
-     * Populate the tables in a `ParsedSchema`
+     * Populate the tables in a `ParsedSchema`. If there are no actual tables, return `null`
      *
      * @param ParsedSchema $parsedSchema
      *
-     * @return ParsedSchema
+     * @return ParsedSchema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema): ParsedSchema;
+    public function populateTables(ParsedSchema $parsedSchema);
 }
