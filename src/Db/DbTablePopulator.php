@@ -16,6 +16,7 @@ namespace Graze\Sprout\Db;
 use Graze\Sprout\Parser\ParsedSchema;
 use Graze\Sprout\Parser\TableFilterer;
 use Graze\Sprout\Parser\TablePopulatorInterface;
+use PDO;
 
 class DbTablePopulator implements TablePopulatorInterface
 {
@@ -56,9 +57,7 @@ class DbTablePopulator implements TablePopulatorInterface
                 AND table_type = "BASE TABLE"'
             );
             $statement->execute(['schema' => $parsedSchema->getSchemaName()]);
-            $tables = $statement->fetchColumn(0);
-
-            $tables = is_string($tables) ? [$tables] : $tables;
+            $tables = $statement->fetchAll(PDO::FETCH_COLUMN);
 
             if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
                 $tables = $this->tableFilterer->filter(

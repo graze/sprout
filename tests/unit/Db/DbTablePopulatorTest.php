@@ -71,7 +71,7 @@ class DbTablePopulatorTest extends TestCase
                   ->execute(['schema' => 'schema1'])
                   ->andReturns($statement);
         $statement->allows()
-                  ->fetchColumn(0)
+                  ->fetchAll(PDO::FETCH_COLUMN)
                   ->andReturns(['table1', 'table2']);
 
         $output = $this->tablePopulator->populateTables($parsedSchema);
@@ -135,7 +135,7 @@ class DbTablePopulatorTest extends TestCase
                   ->execute(['schema' => 'schema1'])
                   ->andReturns($statement);
         $statement->allows()
-                  ->fetchColumn(0)
+                  ->fetchAll(PDO::FETCH_COLUMN)
                   ->andReturns(['table1', 'table2']);
 
         $this->tableFilterer->allows()
