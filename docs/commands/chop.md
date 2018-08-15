@@ -75,7 +75,7 @@ sprout chop --all
 sprout chop --all schema1 schema2
 ```
 
-If you specify schema with tables `schema1:table1,table2`, it will only use the tables specified and not any others. 
+If you specify schema with tables `schema1:table1,table2`, it will only use the tables specified and not any others.
 
 ## Groups
 
