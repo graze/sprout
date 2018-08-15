@@ -3,7 +3,7 @@
 The chop command has the following structure:
 
 ```bash
-sprout chop [--config=<path>] [--group=<group>] [--all] <schema>[:<table>,...]] ...
+sprout chop [--config=<path>] [--group=<group>] [--all] [<schema>[:<table>,...]] ...
 ```
 
 This will truncate the contents of all the specified tables.
