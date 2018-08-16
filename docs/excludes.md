@@ -47,7 +47,7 @@ The above will filter the tables:
 | `aregex`        | no       |
 | `table1234`     | yes      |
 | `table123`      | no       |
-| `table12345`    | no       |
+| `table12345`    | yes      |
 
 !!! note
     Tables defined on the command will override the excludes list
