@@ -10,7 +10,7 @@ These are defined in the [configuration file](setup/configuration.md).
 ```yaml
 schemas:
   schema:
-    excludes:
+    exclude:
       - 'table'
       - 'regex*'
       - '/custom_regex/'
@@ -31,7 +31,7 @@ Setting these configuration options will remove the tables from the the list tha
 ```yaml
 schemas:
   schema:
-    excludes:
+    exclude:
       - 'table'
       - 'regex.*'
       - '/^table\d{4}/'
