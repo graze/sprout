@@ -93,27 +93,12 @@ class ChopCommand extends Command
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
-        $numTables = array_sum(array_map(
-            function (ParsedSchema $schema) {
-                return count($schema->getTables());
-            },
-            $parsedSchemas
-        ));
-
-        $useGlobal = $numTables <= 10;
+        $useGlobal = count($parsedSchemas) <= 10;
 
         $globalPool = new Pool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
         foreach ($parsedSchemas as $schema) {
-            $output->writeln(sprintf(
-                'Chopping down <info>%d</info> tables in <info>%s</info> schema in group <info>%s</info> from <info>%s</info>',
-                count($schema->getTables()),
-                $schema->getSchemaName(),
-                $group,
-                $schema->getPath()
-            ));
-
             if ($useGlobal) {
                 $pool = $globalPool;
             } else {

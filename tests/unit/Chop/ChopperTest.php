@@ -52,11 +52,9 @@ class ChopperTest extends TestCase
 
         $factory->shouldReceive('getChopper')->with($connConfig)->andReturn($tableChopper);
 
-        foreach ($tables as $table) {
-            $tableChopper->shouldReceive('chop')
-                         ->with('schema', $table)
-                         ->once();
-        }
+        $tableChopper->shouldReceive('chop')
+                     ->with('schema', ...$tables)
+                     ->once();
 
         $chopper->chop($tables);
     }

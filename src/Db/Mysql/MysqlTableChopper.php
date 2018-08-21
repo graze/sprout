@@ -39,10 +39,22 @@ class MysqlTableChopper implements TableChopperInterface
 
     /**
      * @param string $schema
-     * @param string $table
+     * @param string ...$tables
      */
-    public function chop(string $schema, string $table)
+    public function chop(string $schema, string ...$tables)
     {
+        $query = sprintf(
+            'SET FOREIGN_KEY_CHECKS=0; %s; SET FOREIGN_KEY_CHECKS=1;',
+            implode(
+                '; ',
+                array_map(
+                    function (string $table) {
+                        return "TRUNCATE `{$table}`";
+                    },
+                    $tables
+                )
+            )
+        );
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
@@ -51,10 +63,11 @@ class MysqlTableChopper implements TableChopperInterface
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),
                 escapeshellarg($schema),
-                escapeshellarg(sprintf('TRUNCATE `%s`', $table))
+                escapeshellarg($query)
             )
         );
 
-        $this->pool->add($process, ['chop', 'schema' => $schema, 'table' => $table]);
+        $displayTables = (count($tables) < 3 ? implode(',', $tables) : count($tables));
+        $this->pool->add($process, ['chop', 'schema' => $schema, 'tables' => $displayTables]);
     }
 }

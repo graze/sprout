@@ -9,7 +9,7 @@ docs_dir: 'docs'
 
 theme:
   name: 'material'
-  custom_dir: theme
+  custom_dir: 'docs/theme'
   favicon: assets/images/favicon.ico
   language: en
   include_sidebar: true

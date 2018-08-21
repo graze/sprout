@@ -16,12 +16,12 @@ namespace Graze\Sprout\Chop;
 interface TableChopperInterface
 {
     /**
-     * Take a file, and write the contents into the table within the specified schema
+     * Truncate all the provided tables in the given schema
      *
      * @param string $schema
-     * @param string $table
+     * @param string ...$tables
      *
      * @return void
      */
-    public function chop(string $schema, string $table);
+    public function chop(string $schema, string ...$tables);
 }
