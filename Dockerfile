@@ -18,7 +18,7 @@ COPY src /app/src
 COPY composer.json /app/composer.json
 COPY composer.lock /app/composer.lock
 
-RUN composer install --no-ansi --no-dev --no-interaction --no-progress --no-scripts --optimize-autoloader --prefer-dist
+RUN composer install --no-ansi --no-dev --no-interaction --no-suggest --no-progress --no-scripts --optimize-autoloader --prefer-dist
 
 FROM graze/php-alpine:7.2 AS run
 

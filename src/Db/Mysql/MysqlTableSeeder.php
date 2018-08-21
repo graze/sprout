@@ -57,12 +57,14 @@ class MysqlTableSeeder implements TableSeederInterface
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
-                'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 %4$s < %5$s',
+                '(echo %6$s; cat %5$s; echo %7$s) | mysql -h%1$s -u%2$s -p%3$s --max_allowed_packet=512M --default-character-set=utf8 %4$s',
                 escapeshellarg($this->connection->getHost()),
                 escapeshellarg($this->connection->getUser()),
                 escapeshellarg($this->connection->getPassword()),
                 escapeshellarg($schema),
-                escapeshellarg($file)
+                escapeshellarg($file),
+                escapeshellarg('SET AUTOCOMMIT=0; SET FOREIGN_KEY_CHECKS=0;'),
+                escapeshellarg('SET AUTOCOMMIT=1; SET FOREIGN_KEY_CHECKS=1;')
             )
         );
 

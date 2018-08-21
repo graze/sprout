@@ -31,7 +31,7 @@ class MysqlTableChopperTest extends TestCase
         $process = Mockery::mock('overload:' . Process::class);
 
         $process->shouldReceive('setCommandLine')
-                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'TRUNCATE `some-table`\' \'some-schema\'')
+                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'SET FOREIGN_KEY_CHECKS=0; TRUNCATE `some-table`; SET FOREIGN_KEY_CHECKS=1;\' \'some-schema\'')
                 ->once();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
@@ -47,11 +47,40 @@ class MysqlTableChopperTest extends TestCase
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['chop', 'schema' => 'some-schema', 'table' => 'some-table']
+                 ['chop', 'schema' => 'some-schema', 'tables' => 'some-table']
              );
 
         $tableChopper = new MysqlTableChopper($pool, $config);
 
         $tableChopper->chop('some-schema', 'some-table');
+    }
+
+    public function testChopWithMultipleTables()
+    {
+        $process = Mockery::mock('overload:' . Process::class);
+
+        $process->shouldReceive('setCommandLine')
+                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'SET FOREIGN_KEY_CHECKS=0; TRUNCATE `some-table`; TRUNCATE `some-table-2`; SET FOREIGN_KEY_CHECKS=1;\' \'some-schema\'')
+                ->once();
+
+        $config = Mockery::mock(ConnectionConfigInterface::class);
+        $config->shouldReceive('getHost')
+               ->andReturn('some-host');
+        $config->shouldReceive('getUser')
+               ->andReturn('some-user');
+        $config->shouldReceive('getPassword')
+               ->andReturn('some-pass');
+
+        $pool = Mockery::mock(Pool::class);
+
+        $pool->shouldReceive('add')
+             ->with(
+                 Mockery::type(Process::class),
+                 ['chop', 'schema' => 'some-schema', 'tables' => 'some-table, some-table-2']
+             );
+
+        $tableChopper = new MysqlTableChopper($pool, $config);
+
+        $tableChopper->chop('some-schema', 'some-table', 'some-table-2');
     }
 }

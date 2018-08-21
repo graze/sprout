@@ -23,25 +23,32 @@ matrix:
 
 before_script:
   - composer config platform.php $(php -r "echo PHP_VERSION;")
-  - travis_retry composer update --no-interaction --prefer-dist $PREFER_LOWEST
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - travis_retry composer update --no-ansi --no-interaction --no-suggest --no-progress --no-scripts --prefer-dist $PREFER_LOWEST
 
 script:
   - vendor/bin/phpcs -p --warning-severity=0 src/ tests/
   - vendor/bin/phpunit --coverage-clover=./tests/report/coverage.clover
-  - make lint-md
 
 after_script:
   - test -f ./tests/report/coverage.clover && (wget https://scrutinizer-ci.com/ocular.phar; php ocular.phar code-coverage:upload --format=php-clover ./tests/report/coverage.clover)
 
 stages:
   - test
+  - lint
   - name: deploy
     if: branch = master
 jobs:
   include:
+  - stage: lint
+    before_script: sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+    script: make lint-md
+    name: "Markdown"
+    after_script: skip
   - stage: deploy
+    before_script: sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
     script: make docs-build
+    name: "Deploy to GitHub Pages"
+    after_script: skip
     deploy:
       provider: pages
       local-dir: site

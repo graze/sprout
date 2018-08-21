@@ -59,8 +59,6 @@ class Chopper
         $tableChopper = $this->factory->getChopper($this->schemaConfig->getConnection());
         $schema = $this->schemaConfig->getSchema();
 
-        foreach ($tables as $table) {
-            $tableChopper->chop($schema, $table);
-        }
+        $tableChopper->chop($schema, ...$tables);
     }
 }

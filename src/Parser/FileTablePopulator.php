@@ -64,6 +64,7 @@ class FileTablePopulator implements TablePopulatorInterface
                 }
             );
 
+            // remove the file extensions to get the table names
             $tables = array_map(
                 function (array $file) {
                     return pathinfo($file['path'], PATHINFO_FILENAME);
@@ -78,7 +79,6 @@ class FileTablePopulator implements TablePopulatorInterface
                 );
             }
 
-            // remove the file extensions to get the table names
             $parsedSchema->setTables($tables);
         }
 
