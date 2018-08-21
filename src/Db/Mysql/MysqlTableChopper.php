@@ -67,7 +67,7 @@ class MysqlTableChopper implements TableChopperInterface
             )
         );
 
-        $displayTables = (count($tables) < 3 ? implode(',', $tables) : count($tables));
+        $displayTables = (count($tables) < 3 ? implode(', ', $tables) : count($tables));
         $this->pool->add($process, ['chop', 'schema' => $schema, 'tables' => $displayTables]);
     }
 }

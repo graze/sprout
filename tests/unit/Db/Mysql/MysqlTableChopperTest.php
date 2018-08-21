@@ -47,7 +47,7 @@ class MysqlTableChopperTest extends TestCase
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['chop', 'schema' => 'some-schema', 'table' => 'some-table']
+                 ['chop', 'schema' => 'some-schema', 'tables' => 'some-table']
              );
 
         $tableChopper = new MysqlTableChopper($pool, $config);
@@ -76,7 +76,7 @@ class MysqlTableChopperTest extends TestCase
         $pool->shouldReceive('add')
              ->with(
                  Mockery::type(Process::class),
-                 ['chop', 'schema' => 'some-schema', 'tables' => 2]
+                 ['chop', 'schema' => 'some-schema', 'tables' => 'some-table, some-table-2']
              );
 
         $tableChopper = new MysqlTableChopper($pool, $config);

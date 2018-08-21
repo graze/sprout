@@ -32,7 +32,7 @@ class MysqlTableSeederTest extends TestCase
         $process = Mockery::mock('overload:' . Process::class);
 
         $process->shouldReceive('setCommandLine')
-                ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 \'some-schema\' < \'some-file\'')
+                ->with('(echo \'SET AUTOCOMMIT=0; SET FOREIGN_KEY_CHECKS=0;\'; cat \'some-file\'; echo \'SET AUTOCOMMIT=1; SET FOREIGN_KEY_CHECKS=1;\') | mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --max_allowed_packet=512M --default-character-set=utf8 \'some-schema\'')
                 ->once();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);

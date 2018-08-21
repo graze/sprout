@@ -63,8 +63,8 @@ class MysqlTableSeeder implements TableSeederInterface
                 escapeshellarg($this->connection->getPassword()),
                 escapeshellarg($schema),
                 escapeshellarg($file),
-                escapeshellarg('SET AUTOCOMMIT = 0; SET FOREIGN_KEY_CHECKS=0;'),
-                escapeshellarg('SET AUTOCOMMIT = 1; SET FOREIGN_KEY_CHECKS=1;')
+                escapeshellarg('SET AUTOCOMMIT=0; SET FOREIGN_KEY_CHECKS=0;'),
+                escapeshellarg('SET AUTOCOMMIT=1; SET FOREIGN_KEY_CHECKS=1;')
             )
         );
 

@@ -23,7 +23,7 @@ matrix:
 
 before_script:
   - composer config platform.php $(php -r "echo PHP_VERSION;")
-  - travis_retry composer update --no-interaction --prefer-dist $PREFER_LOWEST
+  - travis_retry composer update --no-ansi --no-dev --no-interaction --no-progress --no-scripts --prefer-dist $PREFER_LOWEST
 
 script:
   - vendor/bin/phpcs -p --warning-severity=0 src/ tests/
