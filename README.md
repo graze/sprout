@@ -70,7 +70,7 @@ sprout seed --config=config/sprout.yml --group=static
 ### Seeding
 
 ```bash
-sprout seed [--config=<path>] [--group=<group>] [--chop] [<schema>[:<table>,...]] ...
+sprout seed [--config=<path>] [--group=<group>] [--no-chop|--chop-all] [<schema>[:<table>,...]] ...
 
 sprout seed --config=config/sprout.yml the_schema
 sprout seed --config=config/sprout.yml --chop-all the_schema
@@ -88,7 +88,7 @@ sprout seed --config=config/sprout.yml --chop-all --group=extra
 ### Truncating the data from all the tables in a schema
 
 ```bash
-sprout chop [--config=<path>] [--group=<group>] [<schema>[:<table>,...]] ...
+sprout chop [--config=<path>] [--group=<group>] [--all] [<schema>[:<table>,...]] ...
 
 sprout chop --config=config/sprout.yml the_schema
 sprout chop --config=config/sprout.yml the_schema:country
