@@ -1,4 +1,4 @@
-# Running sprout with docker
+# Running Sprout using Composer
 
 Sprout can be run locally in PHP by including it from composer.
 
