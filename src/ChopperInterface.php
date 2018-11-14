@@ -11,20 +11,18 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Chop;
+namespace Graze\Sprout;
 
-use Graze\Sprout\Db\Schema;
-use Graze\Sprout\Db\Table;
+use Graze\Sprout\Db\DbInterface;
 
-interface TableChopperInterface
+interface ChopperInterface
 {
     /**
-     * Truncate all the provided tables in the given schema
+     * Delete any data you wish
      *
-     * @param Schema $schema
-     * @param Table  ...$tables
+     * @param DbInterface $db
      *
      * @return void
      */
-    public function chop(Schema $schema, Table ...$tables);
+    public function chop(DbInterface $db);
 }

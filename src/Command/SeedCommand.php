@@ -14,12 +14,14 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
+use Graze\ParallelProcess\Display\Table;
 use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\PriorityPool;
 use Graze\Sprout\Config\Config;
-use Graze\Sprout\Parser\FileTablePopulator;
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Db\Parser\SchemaParser;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\File\Populator\FileTablePopulator;
+use Graze\Sprout\File\Populator\SeedFilePopulator;
 use Graze\Sprout\Seed\Seeder;
 use Graze\Sprout\Seed\TableSeederFactory;
 use League\Flysystem\Adapter\Local;
@@ -109,13 +111,12 @@ class SeedCommand extends Command
             }
         }
 
-        $fileSystem = new Local('/');
-        $tablePopulator = new FileTablePopulator($fileSystem);
-        $schemaParser = new SchemaParser($tablePopulator, $config, $group);
+        $filesystem = new Local('/');
+        $schemaParser = new SchemaParser($config, $group, new FileTablePopulator($filesystem), new SeedFilePopulator($filesystem));
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $numTables = array_sum(array_map(
-            function (ParsedSchema $schema) {
+            function (Schema $schema) {
                 return count($schema->getTables());
             },
             $parsedSchemas
@@ -123,7 +124,7 @@ class SeedCommand extends Command
 
         $useGlobal = $numTables <= 10;
 
-        $globalPool = new Pool();
+        $globalPool = new PriorityPool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
         foreach ($parsedSchemas as $schema) {
@@ -140,15 +141,13 @@ class SeedCommand extends Command
             } else {
                 $pool = new Pool(
                     [],
-                    $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
-                    false,
                     ['seed', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }
 
-            $seeder = new Seeder($schema->getSchemaConfig(), $output, new TableSeederFactory($pool, $fileSystem));
-            $seeder->seed($schema->getPath(), $schema->getTables());
+            $seeder = new Seeder($schema->getSchemaConfig(), $output, new TableSeederFactory($pool, $filesystem));
+            $seeder->seed($schema);
         }
 
         $processTable = new Table($output, $globalPool);

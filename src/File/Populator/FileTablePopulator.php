@@ -11,8 +11,12 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Parser;
+namespace Graze\Sprout\File\Populator;
 
+use Graze\Sprout\Db\Parser\TableFilterer;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
+use Graze\Sprout\TablePopulatorInterface;
 use League\Flysystem\AdapterInterface;
 
 class FileTablePopulator implements TablePopulatorInterface
@@ -35,19 +39,19 @@ class FileTablePopulator implements TablePopulatorInterface
     }
 
     /**
-     * @param ParsedSchema $parsedSchema
+     * @param Schema $schema
      *
-     * @return ParsedSchema|null
+     * @return Schema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema)
+    public function populateTables(Schema $schema)
     {
-        if (count($parsedSchema->getTables()) === 0) {
-            if ($parsedSchema->getPath() === '' || $this->filesystem->has($parsedSchema->getPath()) === false) {
+        if (count($schema->getTables()) === 0) {
+            if ($schema->getPath() === '' || $this->filesystem->has($schema->getPath()) === false) {
                 return null;
             }
 
             // find existing tables
-            $files = $this->filesystem->listContents($parsedSchema->getPath());
+            $files = $this->filesystem->listContents($schema->getPath());
             $files = array_values(array_filter(
                 $files,
                 function (array $file) {
@@ -56,36 +60,28 @@ class FileTablePopulator implements TablePopulatorInterface
                 }
             ));
 
-            // sort by file size, largest first
-            usort(
-                $files,
-                function (array $a, array $b) {
-                    return ($a['size'] == $b['size']) ? 0 : (($a['size'] > $b['size']) ? -1 : 1);
-                }
-            );
-
             // remove the file extensions to get the table names
             $tables = array_map(
                 function (array $file) {
-                    return pathinfo($file['path'], PATHINFO_FILENAME);
+                    return new Table(pathinfo($file['path'], PATHINFO_FILENAME), $file['path']);
                 },
                 $files
             );
 
-            if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
+            if (count($schema->getSchemaConfig()->getExcludes()) > 0) {
                 $tables = $this->tableFilterer->filter(
                     $tables,
-                    $parsedSchema->getSchemaConfig()->getExcludes()
+                    $schema->getSchemaConfig()->getExcludes()
                 );
             }
 
-            $parsedSchema->setTables($tables);
+            $schema->setTables($tables);
         }
 
-        if (count($parsedSchema->getTables()) === 0) {
+        if (count($schema->getTables()) === 0) {
             return null;
         }
 
-        return $parsedSchema;
+        return $schema;
     }
 }

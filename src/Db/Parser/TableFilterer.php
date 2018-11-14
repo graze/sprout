@@ -1,23 +1,25 @@
 <?php
 
-namespace Graze\Sprout\Parser;
+namespace Graze\Sprout\Db\Parser;
+
+use Graze\Sprout\Db\Table;
 
 class TableFilterer
 {
     /**
-     * @param string[] $tables   list of tables to filter
+     * @param Table[]  $tables   list of tables to filter
      * @param string[] $excludes List of regular expressions to filter tables based on
      *
-     * @return string[] List of table with the excludes removed
+     * @return Table[] List of table with the excludes removed
      */
     public function filter(array $tables, array $excludes): array
     {
         return array_values(array_filter(
             $tables,
-            function (string $table) use ($excludes) {
+            function (Table $table) use ($excludes) {
                 foreach ($excludes as $regex) {
                     $regex = mb_substr($regex, 0, 1) === '/' ? $regex : sprintf('/^%s$/', $regex);
-                    if (preg_match($regex, $table)) {
+                    if (preg_match($regex, $table->getName())) {
                         return false;
                     }
                 }

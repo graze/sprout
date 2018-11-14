@@ -33,9 +33,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $fileSystem = Mockery::mock(AdapterInterface::class);
+        $filesystem = Mockery::mock(AdapterInterface::class);
 
-        $seederFactory = new TableSeederFactory($processTable, $fileSystem);
+        $seederFactory = new TableSeederFactory($processTable, $filesystem);
 
         $tableSeeder = $seederFactory->getSeeder($config);
 
@@ -54,9 +54,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('pgsql');
 
-        $fileSystem = Mockery::mock(AdapterInterface::class);
+        $filesystem = Mockery::mock(AdapterInterface::class);
 
-        $seederFactory = new TableSeederFactory($processTable, $fileSystem);
+        $seederFactory = new TableSeederFactory($processTable, $filesystem);
 
         $seederFactory->getSeeder($config);
     }
@@ -69,9 +69,9 @@ class TableSeederFactoryTest extends TestCase
         $config->shouldReceive('getDriver')
                ->andReturn('mysql');
 
-        $fileSystem = Mockery::mock(AdapterInterface::class);
+        $filesystem = Mockery::mock(AdapterInterface::class);
 
-        $seederFactory = new TableSeederFactory($pool, $fileSystem);
+        $seederFactory = new TableSeederFactory($pool, $filesystem);
         $seederFactory->setLogger($logger);
 
         $logger->allows()

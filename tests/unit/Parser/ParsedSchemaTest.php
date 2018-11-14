@@ -14,7 +14,7 @@
 namespace Graze\Sprout\Test\Unit\Parser;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
-use Graze\Sprout\Parser\ParsedSchema;
+use Graze\Sprout\Db\Schema;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 
@@ -26,7 +26,7 @@ class ParsedSchemaTest extends TestCase
         $configuration->allows()
                       ->getSchema()
                       ->andReturns('the_schema');
-        $parsedSchema = new ParsedSchema($configuration, 'path', ['table1', 'table2']);
+        $parsedSchema = new Schema($configuration, 'path', ['table1', 'table2']);
 
         $this->assertSame($configuration, $parsedSchema->getSchemaConfig());
         $this->assertEquals('the_schema', $parsedSchema->getSchemaName());
@@ -37,7 +37,7 @@ class ParsedSchemaTest extends TestCase
     public function testTheTablesCanBeChanged()
     {
         $configuration = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($configuration, 'path', []);
+        $parsedSchema = new Schema($configuration, 'path', []);
 
         $this->assertSame($configuration, $parsedSchema->getSchemaConfig());
         $this->assertEquals([], $parsedSchema->getTables());

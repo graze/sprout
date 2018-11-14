@@ -117,4 +117,20 @@ class ConnectionConfig implements ConnectionConfigInterface
             $this->getPort()
         );
     }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return sprintf(
+            '%s://%s:%s@%s:%d/%s',
+            $this->getDriver(),
+            $this->getUser(),
+            $this->getPassword(),
+            $this->getHost(),
+            $this->getPort(),
+            $this->getDbName()
+        );
+    }
 }

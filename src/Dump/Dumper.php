@@ -14,6 +14,7 @@
 namespace Graze\Sprout\Dump;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
+use Graze\Sprout\Db\Schema;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
 use RuntimeException;
@@ -53,28 +54,22 @@ class Dumper
     /**
      * Dump a collection of tables to disk
      *
-     * @param string   $path
-     * @param string[] $tables
+     * @param Schema $schema
      */
-    public function dump(string $path, array $tables = [])
+    public function dump(Schema $schema)
     {
-        $tables = array_unique($tables);
-
-        if (count($tables) === 0) {
+        if (count($schema->getTables()) === 0) {
             $this->output->writeln('<warning>No tables specified, nothing to do</warning>');
             return;
         }
 
-        if ($this->filesystem->createDir($path, new Config()) === false) {
-            throw new RuntimeException('dump: failed to create directory: ' . $path);
+        if ($this->filesystem->createDir($schema->getPath(), new Config()) === false) {
+            throw new RuntimeException('dump: failed to create directory: ' . $schema->getPath());
         }
 
-        $tableDumper = $this->factory->getDumper($this->schemaConfig->getConnection());
-        $schema = $this->schemaConfig->getSchema();
-
-        foreach ($tables as $table) {
-            $file = sprintf('%s/%s.sql', $path, $table);
-            $tableDumper->dump($schema, $table, $file);
+        foreach ($schema->getTables() as $table) {
+            $tableDumper = $this->factory->getDumper($schema, $table);
+            $tableDumper->dump($schema, $table);
         }
     }
 }

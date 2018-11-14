@@ -14,6 +14,7 @@
 namespace Graze\Sprout\Seed;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
+use Graze\Sprout\Db\Schema;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,24 +47,18 @@ class Seeder
     /**
      * Seed a collection of files to tables
      *
-     * @param string   $path
-     * @param string[] $tables
+     * @param Schema $schema
      */
-    public function seed(string $path, array $tables = [])
+    public function seed(Schema $schema)
     {
-        $tables = array_unique($tables);
-
-        if (count($tables) === 0) {
+        if (count($schema->getTables()) === 0) {
             $this->output->writeln('<warning>No tables specified, nothing to do</warning>');
             return;
         }
 
-        $tableSeeder = $this->factory->getSeeder($this->schemaConfig->getConnection());
-        $schema = $this->schemaConfig->getSchema();
-
-        foreach ($tables as $table) {
-            $file = sprintf('%s/%s.sql', $path, $table);
-            $tableSeeder->seed($file, $schema, $table);
+        foreach ($schema->getTables() as $table) {
+            $tableSeeder = $this->factory->getSeeder($schema, $table);
+            $tableSeeder->seed($schema, $table);
         }
     }
 }

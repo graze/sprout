@@ -13,14 +13,16 @@
 
 namespace Graze\Sprout\Dump;
 
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
+
 interface TableDumperInterface
 {
     /**
-     * @param string $schema
-     * @param string $table
-     * @param string $file
+     * @param Schema $schema
+     * @param Table  $table
      *
      * @return void
      */
-    public function dump(string $schema, string $table, string $file);
+    public function dump(Schema $schema, Table $table);
 }

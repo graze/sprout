@@ -30,4 +30,6 @@ interface ConnectionConfigInterface
     public function getDbName(): string;
 
     public function getDsn(): string;
+
+    public function getUrl(): string;
 }

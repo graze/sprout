@@ -17,8 +17,8 @@ use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Db\DbTablePopulator;
 use Graze\Sprout\Db\PdoFactory;
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\TableFilterer;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\TableFilterer;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
 use PDO;
@@ -46,7 +46,7 @@ class DbTablePopulatorTest extends TestCase
     public function testTablePopulation()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
         $connection = Mockery::mock(ConnectionConfigInterface::class);
         $config->allows([
             'getExcludes'   => [],
@@ -84,7 +84,7 @@ class DbTablePopulatorTest extends TestCase
     public function testNoTablesArePopulatedIfTheyAreAlreadyProvided()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', ['table1', 'table2']);
+        $parsedSchema = new Schema($config, '/a/path', ['table1', 'table2']);
         $config->allows(['getExcludes' => []]);
 
         $output = $this->tablePopulator->populateTables($parsedSchema);
@@ -97,7 +97,7 @@ class DbTablePopulatorTest extends TestCase
     public function testTablesAreNotExcludedIfIncludedInExcludeList()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', ['table1', 'table2']);
+        $parsedSchema = new Schema($config, '/a/path', ['table1', 'table2']);
         $config->allows(['getExcludes' => ['table1']]);
 
         $output = $this->tablePopulator->populateTables($parsedSchema);
@@ -110,7 +110,7 @@ class DbTablePopulatorTest extends TestCase
     public function testTablesAreFilteredWhenPopulatedFromADatabase()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
         $connection = Mockery::mock(ConnectionConfigInterface::class);
         $config->allows([
             'getExcludes'   => ['table1'],

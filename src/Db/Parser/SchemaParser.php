@@ -11,10 +11,12 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Parser;
+namespace Graze\Sprout\Db\Parser;
 
 use Graze\Sprout\Config\Config;
 use Graze\Sprout\Config\SchemaConfigInterface;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\TablePopulatorInterface;
 
 class SchemaParser
 {
@@ -22,27 +24,27 @@ class SchemaParser
     private $config;
     /** @var null|string */
     private $group;
-    /** @var TablePopulatorInterface */
-    private $populator;
+    /** @var TablePopulatorInterface[] */
+    private $populators;
 
     /**
      * SchemaParser constructor.
      *
-     * @param TablePopulatorInterface $populator
      * @param Config                  $config
      * @param string|null             $group
+     * @param TablePopulatorInterface ...$populators
      */
-    public function __construct(TablePopulatorInterface $populator, Config $config, string $group = null)
+    public function __construct(Config $config, string $group, TablePopulatorInterface ...$populators)
     {
-        $this->populator = $populator;
         $this->config = $config;
         $this->group = $group;
+        $this->populators = $populators;
     }
 
     /**
      * @param array $schemaTables
      *
-     * @return ParsedSchema[]
+     * @return Schema[]
      */
     public function extractSchemas(array $schemaTables = [])
     {
@@ -65,13 +67,21 @@ class SchemaParser
                 $tables = [];
             }
 
-            $parsedSchemas[] = new ParsedSchema(
+            $parsedSchemas[] = new Schema(
                 $this->config->getSchemaConfiguration($schema),
                 $this->config->getSchemaPath($this->config->getSchemaConfiguration($schema), $this->group),
                 $tables
             );
         };
 
-        return array_filter(array_map([$this->populator, 'populateTables'], $parsedSchemas));
+        foreach ($parsedSchemas as $schema) {
+            foreach ($this->populators as $populator) {
+                if ($schema !== null) {
+                    $schema = $populator->populateTables($schema);
+                }
+            }
+        }
+        // ensure there are no null schemas
+        return array_filter($parsedSchemas);
     }
 }

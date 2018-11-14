@@ -14,6 +14,8 @@
 namespace Graze\Sprout\Chop;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\TablePopulatorInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Chopper
@@ -28,9 +30,9 @@ class Chopper
     /**
      * Chopper constructor.
      *
-     * @param SchemaConfigInterface $schemaConfig
-     * @param OutputInterface       $output
-     * @param TableChopperFactory   $factory
+     * @param SchemaConfigInterface   $schemaConfig
+     * @param OutputInterface         $output
+     * @param TableChopperFactory     $factory
      */
     public function __construct(
         SchemaConfigInterface $schemaConfig,
@@ -45,20 +47,33 @@ class Chopper
     /**
      * Chop a collection of files to tables
      *
-     * @param string[] $tables
+     * @param Schema $schema
      */
-    public function chop(array $tables = [])
+    public function chop(Schema $schema)
     {
-        $tables = array_unique($tables);
-
-        if (count($tables) === 0) {
+        if (count($schema->getTables()) === 0) {
             $this->output->writeln('<warning>No tables specified, nothing to do</warning>');
             return;
         }
 
-        $tableChopper = $this->factory->getChopper($this->schemaConfig->getConnection());
-        $schema = $this->schemaConfig->getSchema();
+        // map each table into a collection matching the chopper
+        $tableChoppers = [];
+        foreach ($schema->getTables() as $table) {
+            $tableChopper = $this->factory->getChopper($schema, $table);
+            $hash = spl_object_hash($tableChopper);
+            if (!isset($tableChoppers[$hash])) {
+                $tableChoppers[$hash] = [
+                    'chopper' => $tableChopper,
+                    'tables'  => [],
+                ];
+            }
+            $tableChoppers[$hash]['tables'][] = $table;
+        }
 
-        $tableChopper->chop($schema, ...$tables);
+        foreach ($tableChoppers as $chopperInfo) {
+            /** @var TableChopperInterface $chopper */
+            $chopper = $chopperInfo['chopper'];
+            $chopper->chop($schema, ...$chopperInfo['tables']);
+        }
     }
 }

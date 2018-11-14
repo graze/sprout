@@ -14,60 +14,73 @@
 namespace Graze\Sprout\Db\Mysql;
 
 use Graze\ParallelProcess\Pool;
+use Graze\ParallelProcess\PoolInterface;
 use Graze\Sprout\Chop\TableChopperInterface;
-use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
 use Symfony\Component\Process\Process;
 
 class MysqlTableChopper implements TableChopperInterface
 {
-    /** @var ConnectionConfigInterface */
-    private $connection;
     /** @var Pool */
     private $pool;
 
     /**
      * MysqlTableDumper constructor.
      *
-     * @param Pool                      $pool
-     * @param ConnectionConfigInterface $connection
+     * @param PoolInterface $pool
      */
-    public function __construct(Pool $pool, ConnectionConfigInterface $connection)
+    public function __construct(PoolInterface $pool)
     {
-        $this->connection = $connection;
         $this->pool = $pool;
     }
 
     /**
-     * @param string $schema
-     * @param string ...$tables
+     * @param Schema $schema
+     * @param Table  ...$tables
      */
-    public function chop(string $schema, string ...$tables)
+    public function chop(Schema $schema, Table ...$tables)
     {
         $query = sprintf(
             'SET FOREIGN_KEY_CHECKS=0; %s; SET FOREIGN_KEY_CHECKS=1;',
             implode(
                 '; ',
                 array_map(
-                    function (string $table) {
-                        return "TRUNCATE `{$table}`";
+                    function (Table $table) {
+                        return "TRUNCATE `{$table->getName()}`";
                     },
                     $tables
                 )
             )
         );
+
+        $connection = $schema->getSchemaConfig()->getConnection();
+
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
                 'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 --execute=%5$s %4$s',
-                escapeshellarg($this->connection->getHost()),
-                escapeshellarg($this->connection->getUser()),
-                escapeshellarg($this->connection->getPassword()),
-                escapeshellarg($schema),
+                escapeshellarg($connection->getHost()),
+                escapeshellarg($connection->getUser()),
+                escapeshellarg($connection->getPassword()),
+                escapeshellarg($schema->getSchemaName()),
                 escapeshellarg($query)
             )
         );
 
-        $displayTables = (count($tables) < 3 ? implode(', ', $tables) : count($tables));
-        $this->pool->add($process, ['chop', 'schema' => $schema, 'tables' => $displayTables]);
+        if (count($tables) < 3) {
+            $displayTables = implode(
+                ',',
+                array_map(
+                    function (Table $table) {
+                        return $table->getName();
+                    },
+                    $tables
+                )
+            );
+        } else {
+            $displayTables = count($tables);
+        }
+        $this->pool->add($process, ['chop', 'schema' => $schema->getSchemaName(), 'tables' => $displayTables]);
     }
 }

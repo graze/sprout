@@ -11,11 +11,13 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Db;
+namespace Graze\Sprout\Db\Populator;
 
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\TableFilterer;
-use Graze\Sprout\Parser\TablePopulatorInterface;
+use Graze\Sprout\Db\Parser\TableFilterer;
+use Graze\Sprout\Db\Pdo\PdoFactory;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
+use Graze\Sprout\TablePopulatorInterface;
 use PDO;
 
 class DbTablePopulator implements TablePopulatorInterface
@@ -38,16 +40,16 @@ class DbTablePopulator implements TablePopulatorInterface
     }
 
     /**
-     * Populate the tables in a `ParsedSchema`
+     * Populate the tables in a `Schema`
      *
-     * @param ParsedSchema $parsedSchema
+     * @param Schema $schema
      *
-     * @return ParsedSchema|null
+     * @return Schema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema)
+    public function populateTables(Schema $schema)
     {
-        if (count($parsedSchema->getTables()) === 0) {
-            $connection = $parsedSchema->getSchemaConfig()->getConnection();
+        if (count($schema->getTables()) === 0) {
+            $connection = $schema->getSchemaConfig()->getConnection();
             $pdo = $this->pdoFactory->getPdo($connection);
 
             $statement = $pdo->prepare(
@@ -56,23 +58,30 @@ class DbTablePopulator implements TablePopulatorInterface
                 WHERE table_schema = :schema
                 AND table_type = "BASE TABLE"'
             );
-            $statement->execute(['schema' => $parsedSchema->getSchemaName()]);
+            $statement->execute(['schema' => $schema->getSchemaName()]);
             $tables = $statement->fetchAll(PDO::FETCH_COLUMN);
 
-            if (count($parsedSchema->getSchemaConfig()->getExcludes()) > 0) {
+            if (count($schema->getSchemaConfig()->getExcludes()) > 0) {
                 $tables = $this->tableFilterer->filter(
                     $tables,
-                    $parsedSchema->getSchemaConfig()->getExcludes()
+                    $schema->getSchemaConfig()->getExcludes()
                 );
             }
 
-            $parsedSchema->setTables($tables);
+            $tables = array_map(
+                function (string $table) {
+                    return new Table($table);
+                },
+                $tables
+            );
+
+            $schema->setTables($tables);
         }
 
-        if (count($parsedSchema->getTables()) === 0) {
+        if (count($schema->getTables()) === 0) {
             return null;
         }
 
-        return $parsedSchema;
+        return $schema;
     }
 }

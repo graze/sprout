@@ -14,7 +14,9 @@
 namespace Graze\Sprout\Db\Mysql;
 
 use Graze\ParallelProcess\Pool;
-use Graze\Sprout\Config\ConnectionConfigInterface;
+use Graze\ParallelProcess\Run;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
 use Graze\Sprout\Seed\TableSeederInterface;
 use InvalidArgumentException;
 use League\Flysystem\AdapterInterface;
@@ -22,52 +24,53 @@ use Symfony\Component\Process\Process;
 
 class MysqlTableSeeder implements TableSeederInterface
 {
-    /** @var ConnectionConfigInterface */
-    private $connection;
     /** @var Pool */
     private $pool;
     /** @var AdapterInterface */
-    private $fileSystem;
+    private $filesystem;
 
     /**
      * MysqlTableDumper constructor.
      *
-     * @param Pool                      $pool
-     * @param ConnectionConfigInterface $connection
-     * @param AdapterInterface          $fileSystem
+     * @param Pool             $pool
+     * @param AdapterInterface $filesystem
      */
-    public function __construct(Pool $pool, ConnectionConfigInterface $connection, AdapterInterface $fileSystem)
+    public function __construct(Pool $pool, AdapterInterface $filesystem)
     {
         $this->pool = $pool;
-        $this->connection = $connection;
-        $this->fileSystem = $fileSystem;
+        $this->filesystem = $filesystem;
     }
 
     /**
-     * @param string $file
-     * @param string $schema
-     * @param string $table
+     * @param Schema $schema
+     * @param Table  $table
      */
-    public function seed(string $file, string $schema, string $table)
+    public function seed(Schema $schema, Table $table)
     {
-        if ($this->fileSystem->has($file) === false) {
-            throw new InvalidArgumentException("seed: The file: {$file} does not exist");
+        if ($this->filesystem->has($table->getPath()) === false) {
+            throw new InvalidArgumentException("seed: The file: {$table->getPath()} does not exist");
         }
+
+        $connection = $schema->getSchemaConfig()->getConnection();
 
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
                 '(echo %6$s; cat %5$s; echo %7$s) | mysql -h%1$s -u%2$s -p%3$s --max_allowed_packet=512M --default-character-set=utf8 %4$s',
-                escapeshellarg($this->connection->getHost()),
-                escapeshellarg($this->connection->getUser()),
-                escapeshellarg($this->connection->getPassword()),
-                escapeshellarg($schema),
-                escapeshellarg($file),
+                escapeshellarg($connection->getHost()),
+                escapeshellarg($connection->getUser()),
+                escapeshellarg($connection->getPassword()),
+                escapeshellarg($schema->getSchemaName()),
+                escapeshellarg($table->getPath()),
                 escapeshellarg('SET AUTOCOMMIT=0; SET FOREIGN_KEY_CHECKS=0;'),
                 escapeshellarg('SET AUTOCOMMIT=1; SET FOREIGN_KEY_CHECKS=1;')
             )
         );
 
-        $this->pool->add($process, ['seed', 'schema' => $schema, 'table' => $table]);
+        $this->pool->add(new Run(
+            $process,
+            ['seed', 'schema' => $schema->getSchemaName(), 'table' => $table->getName()],
+            filesize($table->getPath())
+        ));
     }
 }

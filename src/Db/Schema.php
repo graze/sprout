@@ -11,17 +11,17 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Parser;
+namespace Graze\Sprout\Db;
 
 use Graze\Sprout\Config\SchemaConfigInterface;
 
-class ParsedSchema
+class Schema
 {
     /** @var SchemaConfigInterface */
     private $schemaConfig;
     /** @var string */
     private $path;
-    /** @var string[] */
+    /** @var Table[] */
     private $tables;
 
     /**
@@ -29,7 +29,7 @@ class ParsedSchema
      *
      * @param SchemaConfigInterface $schemaConfig
      * @param string                $path
-     * @param string[]              $tables
+     * @param Table[]               $tables
      */
     public function __construct(SchemaConfigInterface $schemaConfig, string $path, array $tables)
     {
@@ -55,7 +55,7 @@ class ParsedSchema
     }
 
     /**
-     * @return string[]
+     * @return Table[]
      */
     public function getTables(): array
     {
@@ -63,11 +63,11 @@ class ParsedSchema
     }
 
     /**
-     * @param string[] $tables
+     * @param Table[] $tables
      *
-     * @return ParsedSchema
+     * @return Schema
      */
-    public function setTables(array $tables): ParsedSchema
+    public function setTables(array $tables): Schema
     {
         $this->tables = $tables;
         return $this;

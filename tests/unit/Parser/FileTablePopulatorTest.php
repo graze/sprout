@@ -16,8 +16,8 @@ namespace Graze\Sprout\Test\Unit\Parser;
 use Graze\Sprout\Config;
 use Graze\Sprout\Config\SchemaConfigInterface;
 use Graze\Sprout\Parser\FileTablePopulator;
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\TableFilterer;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\TableFilterer;
 use Graze\Sprout\Test\TestCase;
 use League\Flysystem\AdapterInterface;
 use Mockery;
@@ -27,21 +27,21 @@ class FileTablePopulatorTest extends TestCase
     /** @var FileTablePopulator */
     private $tablePopulator;
     /** @var mixed */
-    private $fileSystem;
+    private $filesystem;
     /** @var mixed */
     private $tableFilterer;
 
     public function setUp()
     {
-        $this->fileSystem = Mockery::mock(AdapterInterface::class);
+        $this->filesystem = Mockery::mock(AdapterInterface::class);
         $this->tableFilterer = Mockery::mock(TableFilterer::class);
-        $this->tablePopulator = new FileTablePopulator($this->fileSystem, $this->tableFilterer);
+        $this->tablePopulator = new FileTablePopulator($this->filesystem, $this->tableFilterer);
     }
 
     public function testPopulateTablesWithExistingTablesDoesNothing()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', ['table1', 'table2']);
+        $parsedSchema = new Schema($config, '/a/path', ['table1', 'table2']);
         $config->allows(['getExcludes' => []]);
 
         $output = $this->tablePopulator->populateTables($parsedSchema);
@@ -54,16 +54,16 @@ class FileTablePopulatorTest extends TestCase
     public function testPopulateTablesWithNoTablesWillSearchTheFilesystemForTables()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->has('/a/path')
                          ->andReturns(true);
 
         $file1 = ['path' => '/a/path/table1.sql', 'size' => 1234];
         $file2 = ['path' => '/a/path/table2.sql', 'size' => 1234];
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->listContents('/a/path')
                          ->andReturns([$file1, $file2]);
 
@@ -78,16 +78,16 @@ class FileTablePopulatorTest extends TestCase
     public function testPopulateTablesWillFilterOutExcludedTables()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->has('/a/path')
                          ->andReturns(true);
 
         $file1 = ['path' => '/a/path/table1.sql', 'size' => 1234];
         $file2 = ['path' => '/a/path/table2.sql', 'size' => 1234];
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->listContents('/a/path')
                          ->andReturns([$file1, $file2]);
 
@@ -106,10 +106,10 @@ class FileTablePopulatorTest extends TestCase
     public function testPopulateTablesWhenFolderDoesNotExistReturnsNull()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
         $config->allows(['getExcludes' => []]);
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->has('/a/path')
                          ->andReturns(false);
 
@@ -121,14 +121,14 @@ class FileTablePopulatorTest extends TestCase
     public function testPopulateTablesWithNoFilesReturnsNull()
     {
         $config = Mockery::mock(Config\SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '/a/path', []);
+        $parsedSchema = new Schema($config, '/a/path', []);
         $config->allows(['getExcludes' => []]);
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->has('/a/path')
                          ->andReturns(true);
 
-        $this->fileSystem->allows()
+        $this->filesystem->allows()
                          ->listContents('/a/path')
                          ->andReturns([]);
 
@@ -140,7 +140,7 @@ class FileTablePopulatorTest extends TestCase
     public function testEmptyPathReturnsNull()
     {
         $config = Mockery::mock(SchemaConfigInterface::class);
-        $parsedSchema = new ParsedSchema($config, '', []);
+        $parsedSchema = new Schema($config, '', []);
 
         $output = $this->tablePopulator->populateTables($parsedSchema);
 

@@ -13,16 +13,18 @@
 
 namespace Graze\Sprout\Seed;
 
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
+
 interface TableSeederInterface
 {
     /**
      * Take a file, and write the contents into the table within the specified schema
      *
-     * @param string $file
-     * @param string $schema
-     * @param string $table
+     * @param Schema $schema
+     * @param Table  $table
      *
      * @return void
      */
-    public function seed(string $file, string $schema, string $table);
+    public function seed(Schema $schema, Table $table);
 }

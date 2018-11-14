@@ -51,12 +51,12 @@ class MysqlTableSeederTest extends TestCase
                  ['seed', 'schema' => 'some-schema', 'table' => 'some-table']
              );
 
-        $fileSystem = Mockery::mock(AdapterInterface::class);
-        $fileSystem->allows()
+        $filesystem = Mockery::mock(AdapterInterface::class);
+        $filesystem->allows()
                    ->has('some-file')
                    ->andReturns(true);
 
-        $tableSeeder = new MysqlTableSeeder($pool, $config, $fileSystem);
+        $tableSeeder = new MysqlTableSeeder($pool, $config, $filesystem);
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }
@@ -68,12 +68,12 @@ class MysqlTableSeederTest extends TestCase
     {
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $pool = Mockery::mock(Pool::class);
-        $fileSystem = Mockery::mock(AdapterInterface::class);
-        $fileSystem->allows()
+        $filesystem = Mockery::mock(AdapterInterface::class);
+        $filesystem->allows()
                    ->has('some-file')
                    ->andReturns(false);
 
-        $tableSeeder = new MysqlTableSeeder($pool, $config, $fileSystem);
+        $tableSeeder = new MysqlTableSeeder($pool, $config, $filesystem);
 
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }

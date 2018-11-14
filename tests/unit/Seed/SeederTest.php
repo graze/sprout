@@ -58,7 +58,7 @@ class SeederTest extends TestCase
                         ->once();
         }
 
-        $seeder->Seed('/some/path/schema', $tables);
+        $seeder->seed('/some/path/schema', $tables);
     }
 
     /**

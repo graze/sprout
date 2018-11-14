@@ -11,16 +11,18 @@
  * @link    https://github.com/graze/sprout
  */
 
-namespace Graze\Sprout\Parser;
+namespace Graze\Sprout;
+
+use Graze\Sprout\Db\Schema;
 
 interface TablePopulatorInterface
 {
     /**
-     * Populate the tables in a `ParsedSchema`. If there are no actual tables, return `null`
+     * Populate the tables in a `Schema`. If there are no actual tables, return `null`
      *
-     * @param ParsedSchema $parsedSchema
+     * @param Schema $schema
      *
-     * @return ParsedSchema|null
+     * @return Schema|null
      */
-    public function populateTables(ParsedSchema $parsedSchema);
+    public function populateTables(Schema $schema);
 }

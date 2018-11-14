@@ -16,6 +16,14 @@ namespace Graze\Sprout\Seed;
 use Graze\ParallelProcess\Pool;
 use Graze\Sprout\Config\ConnectionConfigInterface;
 use Graze\Sprout\Db\Mysql\MysqlTableSeeder;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\Table;
+use Graze\Sprout\File\Format;
+use Graze\Sprout\File\Php\FileTableSeeder;
+use Graze\Sprout\File\Php\PhpTableSeeder;
+use Graze\Sprout\File\Reader\CsvReader;
+use Graze\Sprout\File\Reader\JsonReader;
+use Graze\Sprout\File\Reader\YamlReader;
 use InvalidArgumentException;
 use League\Flysystem\AdapterInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -29,6 +37,8 @@ class TableSeederFactory implements LoggerAwareInterface
     private $processPool;
     /** @var AdapterInterface */
     private $filesystem;
+    /** @var TableSeederInterface[] */
+    private $seeders;
 
     /**
      * TableDumperFactory constructor.
@@ -43,25 +53,74 @@ class TableSeederFactory implements LoggerAwareInterface
     }
 
     /**
-     * @param ConnectionConfigInterface $connection
+     * @param string   $driver
+     * @param string   $extension
+     *
+     * @param callable $generator
      *
      * @return TableSeederInterface
      */
-    public function getSeeder(ConnectionConfigInterface $connection): TableSeederInterface
+    private function generate(string $driver, string $extension, callable $generator)
     {
-        $driver = $connection->getDriver();
+        $hash = $driver . '.' . $extension;
+        if (!isset($this->dumpers[$hash])) {
+            $this->seeders[$hash] = $generator();
+        }
+        return $this->seeders[$hash];
+    }
 
-        switch ($driver) {
-            case 'mysql':
-                if ($this->logger) {
-                    $this->logger->debug(
-                        "getSeeder: using mysql seeder for driver: {$driver}",
-                        ['driver' => $driver]
-                    );
-                }
-                return new MysqlTableSeeder($this->processPool, $connection, $this->filesystem);
+    /**
+     * @param Schema $schema
+     * @param Table  $table
+     *
+     * @return TableSeederInterface
+     */
+    public function getSeeder(Schema $schema, Table $table): TableSeederInterface
+    {
+        $connection = $schema->getSchemaConfig()->getConnection();
+        $extension = $table->getPath() ? pathinfo($table->getPath(), PATHINFO_EXTENSION) : Format::TYPE_SQL;
+
+        switch (true) {
+            case ($connection->getDriver() == ConnectionConfigInterface::DRIVER_MYSQL
+                  && $extension == Format::TYPE_SQL):
+                return $this->generate(
+                    $connection->getDriver(),
+                    'sql',
+                    function () {
+                        return new MysqlTableSeeder($this->processPool, $this->filesystem);
+                    }
+                );
+            case $extension == Format::TYPE_PHP:
+                return $this->generate(
+                    '',
+                    Format::TYPE_PHP,
+                    function () {
+                        return new PhpTableSeeder($this->processPool, $this->filesystem);
+                    }
+                );
+
+            case $extension == Format::TYPE_CSV:
+                $reader = new CsvReader($this->filesystem);
+            // fall through
+            case $extension == Format::TYPE_YAML:
+            case $extension == 'yml':
+                $reader = $reader ?? new YamlReader($this->filesystem);
+            // fall through
+            case $extension == Format::TYPE_JSON:
+                $reader = $reader ?? new JsonReader($this->filesystem);
+                return $this->generate(
+                    '',
+                    $extension,
+                    function () use ($reader) {
+                        return new FileTableSeeder(
+                            $reader,
+                            $this->processPool,
+                            $this->filesystem
+                        );
+                    }
+                );
             default:
-                throw new InvalidArgumentException("getSeeder: no seeder found for driver: `{$driver}`");
+                throw new InvalidArgumentException("no dumper could be generated for driver:`{$connection->getDriver()}` and fileType:`{$extension}`");
         }
     }
 }

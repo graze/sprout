@@ -2,7 +2,7 @@
 
 namespace Graze\Sprout\Test\Unit\Parser;
 
-use Graze\Sprout\Parser\TableFilterer;
+use Graze\Sprout\Db\TableFilterer;
 use Graze\Sprout\Test\TestCase;
 
 class TableFilterableTest extends TestCase

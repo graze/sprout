@@ -15,8 +15,8 @@ namespace Graze\Sprout\Test\Unit\Parser;
 
 use Graze\Sprout\Config\Config;
 use Graze\Sprout\Config\SchemaConfigInterface;
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Db\Schema;
+use Graze\Sprout\Db\SchemaParser;
 use Graze\Sprout\Parser\FileTablePopulator;
 use Graze\Sprout\Test\TestCase;
 use Mockery;
@@ -63,7 +63,7 @@ class SchemaParserTest extends TestCase
 
         $parsedSchemas = [];
         $this->tablePopulator->allows()
-                             ->populateTables(Mockery::on(function (ParsedSchema $schema) use (&$parsedSchemas) {
+                             ->populateTables(Mockery::on(function (Schema $schema) use (&$parsedSchemas) {
                                  $parsedSchemas[] = $schema;
                                  return true;
                              }))
@@ -112,7 +112,7 @@ class SchemaParserTest extends TestCase
 
         $parsedSchemas = [];
         $this->tablePopulator->allows()
-                             ->populateTables(Mockery::on(function (ParsedSchema $schema) use (&$parsedSchemas) {
+                             ->populateTables(Mockery::on(function (Schema $schema) use (&$parsedSchemas) {
                                  $parsedSchemas[] = $schema;
                                  return true;
                              }))
@@ -161,7 +161,7 @@ class SchemaParserTest extends TestCase
 
         $parsedSchemas = [];
         $this->tablePopulator->allows()
-                             ->populateTables(Mockery::on(function (ParsedSchema $schema) use (&$parsedSchemas) {
+                             ->populateTables(Mockery::on(function (Schema $schema) use (&$parsedSchemas) {
                                  $parsedSchemas[] = $schema;
                                  return true;
                              }))
@@ -215,7 +215,7 @@ class SchemaParserTest extends TestCase
 
         $parsedSchemas = [];
         $this->tablePopulator->allows()
-                             ->populateTables(Mockery::on(function (ParsedSchema $schema) use (&$parsedSchemas) {
+                             ->populateTables(Mockery::on(function (Schema $schema) use (&$parsedSchemas) {
                                  $parsedSchemas[] = $schema;
                                  return true;
                              }))

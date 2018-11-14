@@ -13,15 +13,16 @@
 
 namespace Graze\Sprout\Command;
 
+use Graze\ParallelProcess\Display\Table;
 use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\PriorityPool;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config\Config;
-use Graze\Sprout\Db\DbTablePopulator;
-use Graze\Sprout\Parser\FileTablePopulator;
-use Graze\Sprout\Parser\ParsedSchema;
-use Graze\Sprout\Parser\SchemaParser;
+use Graze\Sprout\Db\Parser\SchemaParser;
+use Graze\Sprout\Db\Populator\DbTablePopulator;
+use Graze\Sprout\File\Populator\FileTablePopulator;
+use Graze\Sprout\File\Populator\SeedFilePopulator;
 use League\Flysystem\Adapter\Local;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -87,15 +88,16 @@ class ChopCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $tablePopulator = $input->getOption(static::OPTION_CONFIG)
-            ? new DbTablePopulator()
-            : new FileTablePopulator(new Local('/'));
-        $schemaParser = new SchemaParser($tablePopulator, $config, $group);
+        $filesystem = new Local('/');
+        $tablePopulators = ($input->getOption(static::OPTION_ALL) === true)
+            ? [new DbTablePopulator(), new SeedFilePopulator($filesystem)]
+            : [new FileTablePopulator($filesystem)];
+        $schemaParser = new SchemaParser($config, $group, ...$tablePopulators);
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $useGlobal = count($parsedSchemas) <= 10;
 
-        $globalPool = new Pool();
+        $globalPool = new PriorityPool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
         foreach ($parsedSchemas as $schema) {
@@ -103,16 +105,15 @@ class ChopCommand extends Command
                 $pool = $globalPool;
             } else {
                 $pool = new Pool(
+                    $globalPool,
                     [],
-                    $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
-                    false,
                     ['chop', 'schema' => $schema->getSchemaName()]
                 );
                 $globalPool->add($pool);
             }
 
-            $chopper = new Chopper($schema->getSchemaConfig(), $output, new TableChopperFactory($pool));
-            $chopper->chop($schema->getTables());
+            $chopper = new Chopper($schema->getSchemaConfig(), $output, new TableChopperFactory($pool, $filesystem));
+            $chopper->chop($schema);
         }
 
         $processTable = new Table($output, $globalPool);

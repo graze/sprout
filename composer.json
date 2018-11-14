@@ -29,7 +29,7 @@
   },
   "require": {
     "php": "^7.0",
-    "graze/parallel-process": "^0.7",
+    "graze/parallel-process": "^0.8.0",
     "graze/console-diff-renderer": "^0.6.1",
     "graze/data-structure": "^2.0",
     "graze/config-validation": "^0.2",
@@ -37,7 +37,9 @@
     "psr/log": "^1.0",
     "respect/validation": "^1.1",
     "symfony/console": "^3.3 | ^4",
-    "symfony/yaml": "^3.3 | ^4"
+    "symfony/yaml": "^3.3 | ^4",
+    "doctrine/dbal": "^2.8",
+    "league/csv": "^9.1"
   },
   "require-dev": {
     "graze/standards": "^2.0",
