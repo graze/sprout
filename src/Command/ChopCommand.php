@@ -87,7 +87,7 @@ class ChopCommand extends Command
         $config = (new Config())->parse($input->getOption('config'));
         $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
-        $tablePopulator = $input->getOption(static::OPTION_CONFIG)
+        $tablePopulator = $input->getOption(static::OPTION_ALL)
             ? new DbTablePopulator()
             : new FileTablePopulator(new Local('/'));
         $schemaParser = new SchemaParser($tablePopulator, $config, $group);
