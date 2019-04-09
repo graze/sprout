@@ -4,14 +4,12 @@ This is to spec out what we would require?
 
 ## Research
 
-- Web/Dispatch/Stats uses mysqldump / mysql to dump and restore the data in .sql files (for speed)
-- Payment API uses some custom seed/builder classes to create the data required
+- our monolith applications use mysqldump / mysql to dump and restore the data in .sql files (for speed)
+- 1 service uses some custom seed/builder classes to create the data required
 - The other php services uses custom Seed data commands to populate data basically using raw database inserts
-- Percy uses in-code based seeding of test data
-- subscription history uses custom go code for each seed
-- token service uses custom go code to populate items in dynamodb
-- address uses custom python code to seed some tables
-- Web only currently uses static data
+- A/B testing service uses in-code based seeding of test data
+- Our go services use custom code
+- Our python services use custom code
 
 ## Requirements
 

@@ -74,15 +74,14 @@ class TableDumperFactory implements LoggerAwareInterface
 
     /**
      * @param string   $driver
-     * @param string   $extension
-     *
+     * @param string   $format
      * @param callable $generator
      *
      * @return TableDumperInterface
      */
-    private function generate(string $driver, string $extension, callable $generator)
+    private function generate(string $driver, string $format, callable $generator)
     {
-        $hash = $driver . '.' . $extension;
+        $hash = $driver . '.' . $format;
         if (!isset($this->dumpers[$hash])) {
             $this->dumpers[$hash] = $generator();
         }
@@ -103,10 +102,11 @@ class TableDumperFactory implements LoggerAwareInterface
         } else {
             $extension = $table->getPath() ? pathinfo($table->getPath(), PATHINFO_EXTENSION) : $this->format;
         }
+        $format = Format::parseFormat($extension);
 
         switch (true) {
             case ($connection->getDriver() == ConnectionConfigInterface::DRIVER_MYSQL
-                  && $extension == Format::TYPE_SQL):
+                  && $format == Format::TYPE_SQL):
                 return $this->generate(
                     $connection->getDriver(),
                     Format::TYPE_SQL,
@@ -114,21 +114,20 @@ class TableDumperFactory implements LoggerAwareInterface
                         return new MysqlTableDumper($this->processPool);
                     }
                 );
-            case $extension == Format::TYPE_CSV:
+            case $format == Format::TYPE_CSV:
                 $reader = new CsvReader($this->filesystem);
                 $writer = new CsvWriter($this->filesystem);
             // fall through
-            case $extension == Format::TYPE_YAML:
-            case $extension == 'yml':
+            case $format == Format::TYPE_YAML:
                 $reader = $reader ?? new YamlReader($this->filesystem);
                 $writer = $writer ?? new YamlWriter($this->filesystem);
             // fall through
-            case $extension == Format::TYPE_JSON:
+            case $format == Format::TYPE_JSON:
                 $reader = $reader ?? new JsonReader($this->filesystem);
                 $writer = $writer ?? new JsonWriter($this->filesystem);
                 return $this->generate(
                     '',
-                    $extension,
+                    $format,
                     function () use ($writer, $reader) {
                         return new FileTableDumper(
                             $writer,

@@ -54,15 +54,14 @@ class TableSeederFactory implements LoggerAwareInterface
 
     /**
      * @param string   $driver
-     * @param string   $extension
-     *
+     * @param string   $format
      * @param callable $generator
      *
      * @return TableSeederInterface
      */
-    private function generate(string $driver, string $extension, callable $generator)
+    private function generate(string $driver, string $format, callable $generator)
     {
-        $hash = $driver . '.' . $extension;
+        $hash = $driver . '.' . $format;
         if (!isset($this->dumpers[$hash])) {
             $this->seeders[$hash] = $generator();
         }
@@ -79,10 +78,11 @@ class TableSeederFactory implements LoggerAwareInterface
     {
         $connection = $schema->getSchemaConfig()->getConnection();
         $extension = $table->getPath() ? pathinfo($table->getPath(), PATHINFO_EXTENSION) : Format::TYPE_SQL;
+        $format = Format::parseFormat($extension);
 
         switch (true) {
             case ($connection->getDriver() == ConnectionConfigInterface::DRIVER_MYSQL
-                  && $extension == Format::TYPE_SQL):
+                  && $format == Format::TYPE_SQL):
                 return $this->generate(
                     $connection->getDriver(),
                     'sql',
@@ -90,7 +90,7 @@ class TableSeederFactory implements LoggerAwareInterface
                         return new MysqlTableSeeder($this->processPool, $this->filesystem);
                     }
                 );
-            case $extension == Format::TYPE_PHP:
+            case $format == Format::TYPE_PHP:
                 return $this->generate(
                     '',
                     Format::TYPE_PHP,
@@ -99,18 +99,17 @@ class TableSeederFactory implements LoggerAwareInterface
                     }
                 );
 
-            case $extension == Format::TYPE_CSV:
+            case $format == Format::TYPE_CSV:
                 $reader = new CsvReader($this->filesystem);
             // fall through
-            case $extension == Format::TYPE_YAML:
-            case $extension == 'yml':
+            case $format == Format::TYPE_YAML:
                 $reader = $reader ?? new YamlReader($this->filesystem);
             // fall through
-            case $extension == Format::TYPE_JSON:
+            case $format == Format::TYPE_JSON:
                 $reader = $reader ?? new JsonReader($this->filesystem);
                 return $this->generate(
                     '',
-                    $extension,
+                    $format,
                     function () use ($reader) {
                         return new FileTableSeeder(
                             $reader,

@@ -72,28 +72,28 @@ class PhpTableChopper implements TableChopperInterface
             throw new InvalidArgumentException("chop: The file: `{$table->getPath()}`` does not exist");
         }
 
-        $seeder = include $table->getPath();
+        $chopper = include $table->getPath();
 
-        if (is_null($seeder)) {
+        if (is_null($chopper)) {
             throw new \RuntimeException("chop: The supplied file: `{$table->getPath()}` does not return an object");
         }
 
-        if ($seeder instanceof ChopperInterface) {
+        if ($chopper instanceof ChopperInterface) {
             $this->pool->add(
-                new CallbackRun(function () use ($seeder, $schema) {
+                new CallbackRun(function () use ($chopper, $schema) {
                     $db = $this->dbFactory->getDb($schema->getSchemaConfig());
-                    $seeder->chop($db);
+                    $chopper->chop($db);
                 }),
                 ['seed', 'schema' => $schema->getSchemaName(), 'table' => $table->getName()]
             );
-        } elseif ($seeder instanceof SeedDataInterface) {
-            if ($seeder->getSeedType() === SeedDataInterface::SEED_TYPE_TRUNCATE) {
+        } elseif ($chopper instanceof SeedDataInterface) {
+            if ($chopper->getSeedType() === SeedDataInterface::SEED_TYPE_TRUNCATE) {
                 $this->pool->add(
-                    new CallbackRun(function () use ($seeder, $schema) {
+                    new CallbackRun(function () use ($chopper, $schema) {
                         $db = $this->dbFactory->getDb($schema->getSchemaConfig());
-                        $db->truncate($seeder->getTableName());
+                        $db->truncate($chopper->getTableName());
                     }),
-                    ['seed', 'schema' => $schema->getSchemaName(), 'table' => $seeder->getTableName()]
+                    ['seed', 'schema' => $schema->getSchemaName(), 'table' => $chopper->getTableName()]
                 );
             }
         } else {

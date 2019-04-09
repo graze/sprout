@@ -3,7 +3,7 @@
 The dump command has the following structure:
 
 ```bash
-sprout dump [--config=<path>] [--group=<group>] [<schema>[:<table>,...]] ...
+sprout dump [--config=<path>] [--group=<group>] [--format=<format>] [<schema>[:<table>,...]] ...
 ```
 
 This will dump the contents of a table to a related file in the specified group as a collection of sql insert

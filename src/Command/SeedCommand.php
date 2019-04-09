@@ -92,17 +92,17 @@ class SeedCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $schemas = $input->getArgument(static::ARGUMENT_SCHEMA_TABLES);
-        $config = (new Config())->parse($input->getOption('config'));
-        $group = $input->getOption('group') ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
+        $config = (new Config())->parse($input->getOption(static::OPTION_CONFIG));
+        $group = $input->getOption(static::OPTION_GROUP) ?: $config->get(Config::CONFIG_DEFAULT_GROUP);
 
         if (!$input->getOption(static::OPTION_NO_CHOP)) {
             $chopCommand = new ChopCommand();
             $exitCode = $chopCommand->run(
                 new ArrayInput([
-                    static::ARGUMENT_SCHEMA_TABLES => $schemas,
-                    '--' . static::OPTION_CONFIG   => $input->getOption(static::OPTION_CONFIG),
-                    '--' . static::OPTION_GROUP    => $group,
-                    '--' . ChopCommand::OPTION_ALL => $input->getOption(static::OPTION_CHOP_ALL),
+                    static::ARGUMENT_SCHEMA_TABLES    => $schemas,
+                    '--' . ChopCommand::OPTION_CONFIG => $input->getOption(static::OPTION_CONFIG),
+                    '--' . ChopCommand::OPTION_GROUP  => $group,
+                    '--' . ChopCommand::OPTION_ALL    => $input->getOption(static::OPTION_CHOP_ALL),
                 ]),
                 $output
             );
@@ -112,7 +112,11 @@ class SeedCommand extends Command
         }
 
         $filesystem = new Local('/');
-        $schemaParser = new SchemaParser($config, $group, new FileTablePopulator($filesystem), new SeedFilePopulator($filesystem));
+        $schemaParser = new SchemaParser($config,
+            $group,
+            new FileTablePopulator($filesystem),
+            new SeedFilePopulator($filesystem)
+        );
         $parsedSchemas = $schemaParser->extractSchemas($schemas);
 
         $numTables = array_sum(array_map(
