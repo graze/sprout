@@ -2,7 +2,7 @@
 
 
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="no-js">
   <head>
     
@@ -36,7 +36,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-3.0.6">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.2.0">
     
     
       
@@ -44,9 +44,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.750b69bd.css">
       
-        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.22915126.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.224b79ff.css">
       
       
         
@@ -55,7 +55,7 @@
       
     
     
-      <script src="../../assets/javascripts/modernizr.1aa3b519.js"></script>
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
     
     
       
@@ -65,6 +65,10 @@
       
     
     <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+      
     
     
   </head>
@@ -123,22 +127,19 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
-            
-              <span class="md-header-nav__topic">
-                Sprout
-              </span>
-              <span class="md-header-nav__topic">
-                Configuration File
-              </span>
-            
+            <span class="md-header-nav__topic">
+              Sprout
+            </span>
+            <span class="md-header-nav__topic">
+              Configuration File
+            </span>
           
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
         
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
           
-            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
-            
 <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
@@ -161,7 +162,6 @@
     </div>
   </div>
 </div>
-          
         
       </div>
       
@@ -172,20 +172,18 @@
 
   
 
-
-  <a href="https://github.com/graze/sprout/" title="Go to repository" class="md-source" data-md-source="github">
-    
-      <div class="md-source__icon">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <use xlink:href="#__github" width="24" height="24"></use>
-        </svg>
-      </div>
-    
-    <div class="md-source__repository">
-      GitHub
+<a href="https://github.com/graze/sprout/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
     </div>
-  </a>
-
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
           </div>
         </div>
       
@@ -221,20 +219,18 @@
 
   
 
-
-  <a href="https://github.com/graze/sprout/" title="Go to repository" class="md-source" data-md-source="github">
-    
-      <div class="md-source__icon">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <use xlink:href="#__github" width="24" height="24"></use>
-        </svg>
-      </div>
-    
-    <div class="md-source__repository">
-      GitHub
+<a href="https://github.com/graze/sprout/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
     </div>
-  </a>
-
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
     </div>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -527,42 +523,42 @@
 using <code>--config=path/to/file.yml</code>. This file is relative to the current working directory.</p>
 <h2 id="complete-configuration-file-example">Complete Configuration File Example<a class="headerlink" href="#complete-configuration-file-example" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><span class="c1"># [optional] default properties to use</span>
-<span class="l l-Scalar l-Scalar-Plain">defaults</span><span class="p p-Indicator">:</span>
+<span class="nt">defaults</span><span class="p">:</span>
 
   <span class="c1"># [optional, string, default: `core`] The default group to use if `--group` is not specified</span>
-  <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">core</span>
+  <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">core</span>
 
   <span class="c1"># [optional, string, default: `/seed`] The root path of all the seed data</span>
-  <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/seed</span>
+  <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/seed</span>
 
   <span class="c1"># [optional, int, default: `10`] Maximum number of simultaneous processes to run at a time</span>
-  <span class="l l-Scalar l-Scalar-Plain">simultaneousProcesses</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+  <span class="nt">simultaneousProcesses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
 
 <span class="c1"># [optional] The groups root collection allows you to specify custom paths for an individual group</span>
-<span class="l l-Scalar l-Scalar-Plain">groups</span><span class="p p-Indicator">:</span>
+<span class="nt">groups</span><span class="p">:</span>
 
   <span class="c1"># The name of the group (used when specifying `--group=&lt;group&gt;`</span>
-  <span class="l l-Scalar l-Scalar-Plain">core</span><span class="p p-Indicator">:</span>
+  <span class="nt">core</span><span class="p">:</span>
 
     <span class="c1"># [optional, string] A custom path to the group if it does not follow the `/root/group/` hierarchy. This is absolute</span>
     <span class="c1"># or relative to the working directory</span>
-    <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/custom/path/to/group</span>
+    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/custom/path/to/group</span>
 
 <span class="c1"># [required, min: 1] Schemas specify each schema you wish to seed in the database and their connection information</span>
-<span class="l l-Scalar l-Scalar-Plain">schemas</span><span class="p p-Indicator">:</span>
+<span class="nt">schemas</span><span class="p">:</span>
 
   <span class="c1"># name of the schema to reference. There must be at least 1 schema in the configuration file</span>
-  <span class="l l-Scalar l-Scalar-Plain">schema1</span><span class="p p-Indicator">:</span>
+  <span class="nt">schema1</span><span class="p">:</span>
 
     <span class="c1"># [optional, string] the actual name of the schema in the database. If not specified, the schema name from</span>
     <span class="c1"># above will be used</span>
-    <span class="l l-Scalar l-Scalar-Plain">schema</span><span class="p p-Indicator">:</span> <span class="s">&#39;schema&#39;</span>
+    <span class="nt">schema</span><span class="p">:</span> <span class="s">&#39;schema&#39;</span>
 
     <span class="c1"># [optional, string] A custom directory name for this schema, only required if it is different from the `schema` value</span>
-    <span class="l l-Scalar l-Scalar-Plain">dirName</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">directory</span>
+    <span class="nt">dirName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">directory</span>
 
     <span class="c1"># [optional, array[string]] A list of tables (as regular expressions) to exclude from actions</span>
-    <span class="l l-Scalar l-Scalar-Plain">exclude</span><span class="p p-Indicator">:</span>
+    <span class="nt">exclude</span><span class="p">:</span>
       <span class="p p-Indicator">-</span> <span class="s">&#39;table1&#39;</span>
       <span class="p p-Indicator">-</span> <span class="s">&#39;table2&#39;</span>
       <span class="p p-Indicator">-</span> <span class="s">&#39;migrations&#39;</span>
@@ -570,42 +566,42 @@ using <code>--config=path/to/file.yml</code>. This file is relative to the curre
       <span class="p p-Indicator">-</span> <span class="s">&#39;/^table_\d{4}/&#39;</span>
 
     <span class="c1"># [required] Connection details</span>
-    <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span> <span class="nl">&amp;default_connection</span>
+    <span class="nt">connection</span><span class="p">:</span> <span class="nl">&amp;default_connection</span>
 
       <span class="c1"># [required, string] Username of the database connection</span>
-      <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;morphism&#39;</span>
+      <span class="nt">user</span><span class="p">:</span> <span class="s">&#39;morphism&#39;</span>
 
       <span class="c1"># [required, string] Password of the database connection</span>
-      <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;morphism&#39;</span>
+      <span class="nt">password</span><span class="p">:</span> <span class="s">&#39;morphism&#39;</span>
 
       <span class="c1"># [required] driver for the database connection, currently only: `mysql` is supported</span>
-      <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="s">&#39;mysql&#39;</span>
+      <span class="nt">driver</span><span class="p">:</span> <span class="s">&#39;mysql&#39;</span>
 
       <span class="c1"># [required, string] database on a remote host</span>
-      <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="s">&#39;db&#39;</span>
+      <span class="nt">host</span><span class="p">:</span> <span class="s">&#39;db&#39;</span>
 
       <span class="c1"># [optional, string] name of the database. If not specified `&lt;schema&gt;` will be used</span>
-      <span class="l l-Scalar l-Scalar-Plain">dbName</span><span class="p p-Indicator">:</span> <span class="s">&#39;schema&#39;</span>
+      <span class="nt">dbName</span><span class="p">:</span> <span class="s">&#39;schema&#39;</span>
 
       <span class="c1"># [optional, int, default: `3306`] The port to connect on</span>
-      <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">3306</span>
+      <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3306</span>
 
   <span class="c1"># A second schema,</span>
-  <span class="l l-Scalar l-Scalar-Plain">schema2</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span>
+  <span class="nt">schema2</span><span class="p">:</span>
+    <span class="nt">connection</span><span class="p">:</span>
       <span class="c1"># you can use yaml anchors to reduce duplicate data</span>
-      <span class="l l-Scalar l-Scalar-Plain">&lt;&lt;</span><span class="p p-Indicator">:</span> <span class="nv">*default_connection</span>
+      <span class="nt">&lt;&lt;</span><span class="p">:</span> <span class="nv">*default_connection</span>
 </pre></div>
 
 <h2 id="minimal-configuration-file">Minimal Configuration File<a class="headerlink" href="#minimal-configuration-file" title="Permanent link">&para;</a></h2>
 <p>This is a minimal configuration file with a single schema and connection</p>
-<div class="codehilite"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">schemas</span><span class="p p-Indicator">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">first_schema</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">connection</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
-      <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
-      <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-      <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rootpassword</span>
+<div class="codehilite"><pre><span></span><span class="nt">schemas</span><span class="p">:</span>
+  <span class="nt">first_schema</span><span class="p">:</span>
+    <span class="nt">connection</span><span class="p">:</span>
+      <span class="nt">host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
+      <span class="nt">driver</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql</span>
+      <span class="nt">user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+      <span class="nt">password</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">rootpassword</span>
 </pre></div>
 
 <h2 id="excludes">Excludes<a class="headerlink" href="#excludes" title="Permanent link">&para;</a></h2>
@@ -677,20 +673,15 @@ using <code>--config=path/to/file.yml</code>. This file is relative to the curre
           Material for MkDocs</a>
       </div>
       
-        
-      
     </div>
   </div>
 </footer>
       
     </div>
     
-      <script src="../../assets/javascripts/application.5e60981f.js"></script>
+      <script src="../../assets/javascripts/application.39abc4af.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
-      
-    
-    
       
     
   </body>
