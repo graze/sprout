@@ -20,7 +20,7 @@ COPY composer.lock /app/composer.lock
 
 RUN composer install --no-ansi --no-dev --no-interaction --no-suggest --no-progress --no-scripts --optimize-autoloader --prefer-dist
 
-FROM graze/php-alpine:7.2 AS run
+FROM graze/php-alpine:7.3 AS run
 
 RUN set +xe \
     && apk add --no-cache \
