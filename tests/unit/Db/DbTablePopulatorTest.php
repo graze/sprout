@@ -36,7 +36,7 @@ class DbTablePopulatorTest extends TestCase
     /** @var mixed */
     private $pdoFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->pdoFactory = Mockery::mock(PdoFactory::class);
         $this->tableFilterer = Mockery::mock(TableFilterer::class);

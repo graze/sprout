@@ -30,7 +30,7 @@ class SchemaParserTest extends TestCase
     /** @var SchemaParser */
     private $schemaParser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tablePopulator = Mockery::mock(FileTablePopulator::class);
         $this->config = Mockery::mock(Config::class);

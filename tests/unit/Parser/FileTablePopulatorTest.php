@@ -31,7 +31,7 @@ class FileTablePopulatorTest extends TestCase
     /** @var mixed */
     private $tableFilterer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->fileSystem = Mockery::mock(AdapterInterface::class);
         $this->tableFilterer = Mockery::mock(TableFilterer::class);

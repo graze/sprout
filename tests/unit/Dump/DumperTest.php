@@ -37,7 +37,7 @@ class DumperTest extends TestCase
     /** @var mixed */
     private $filesystem;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = Mockery::mock(SchemaConfigInterface::class);
         $this->outputter = Mockery::mock(OutputInterface::class);
