@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.0', '7.1', '7.2', '7.3', '7.4']
+        php: ['7.2', '7.3', '7.4']
         prefer_lowest: [false, true]
     steps:
       - uses: actions/checkout@v4
@@ -28,11 +28,7 @@ jobs:
         run: composer config platform.php "$(php -r 'echo PHP_VERSION;')"
 
       - name: Allow legacy deps with advisories (PHPUnit 5–7, symfony/process 2–4)
-        # audit.block-insecure was added in Composer 2.7. PHP 7.0/7.1 ship
-        # with Composer 2.2 (last minor that supports those PHP versions),
-        # which rejects the unknown key — that's fine, 2.2 doesn't have
-        # block-insecure to worry about anyway.
-        run: composer config audit.block-insecure false || true
+        run: composer config audit.block-insecure false
 
       - name: Install dependencies
         run: composer update --no-ansi --no-interaction --no-progress --no-scripts --prefer-dist ${{ matrix.prefer_lowest && '--prefer-lowest' || '' }}
