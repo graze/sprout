@@ -7,13 +7,13 @@ on:
 
 jobs:
   test:
-    name: PHP ${{ matrix.php }}${{ matrix.prefer-lowest && ' (lowest)' || '' }}
+    name: PHP ${{ matrix.php }}${{ matrix.prefer_lowest && ' (lowest)' || '' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         php: ['7.0', '7.1', '7.2', '7.3', '7.4']
-        prefer-lowest: [false, true]
+        prefer_lowest: [false, true]
     steps:
       - uses: actions/checkout@v4
 
@@ -35,7 +35,7 @@ jobs:
         run: composer config audit.block-insecure false || true
 
       - name: Install dependencies
-        run: composer update --no-ansi --no-interaction --no-progress --no-scripts --prefer-dist ${{ matrix.prefer-lowest && '--prefer-lowest' || '' }}
+        run: composer update --no-ansi --no-interaction --no-progress --no-scripts --prefer-dist ${{ matrix.prefer_lowest && '--prefer-lowest' || '' }}
 
       - name: Lint (phpcs)
         run: vendor/bin/phpcs -p --warning-severity=0 src/ tests/
