@@ -88,7 +88,7 @@ docs-test: ## Run docs test server
 	docker run --rm -it -p 8000:8000 -v $$(pwd):/docs squidfunk/mkdocs-material
 
 docs-build: ## Build the mkdocs documentation
-	docker run --rm -it -v $$(pwd):/docs squidfunk/mkdocs-material build
+	docker run --rm -v $$(pwd):/docs squidfunk/mkdocs-material build
 
 docs-deploy: ## Deploy the mkdocs documentation
 	docker run --rm -it -v ~/.ssh:/root/.ssh -v $$(pwd):/docs -e GITHUB_TOKEN squidfunk/mkdocs-material gh-deploy
