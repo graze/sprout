@@ -24,11 +24,11 @@
   ],
   "config": {
     "platform": {
-      "php": "7.3"
+      "php": "7.4"
     }
   },
   "require": {
-    "php": "^7.0",
+    "php": "^7.4",
     "graze/parallel-process": "^0.7",
     "graze/console-diff-renderer": "^0.6.1",
     "graze/data-structure": "^2.0",

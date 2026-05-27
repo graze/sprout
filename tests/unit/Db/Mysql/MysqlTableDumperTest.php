@@ -32,7 +32,7 @@ class MysqlTableDumperTest extends TestCase
 
         $process->shouldReceive('setCommandLine')
                 ->with(
-                    'mysqldump -h\'some-host\' -u\'some-user\' -p\'some-pass\' --compress --compact --no-create-info' .
+                    'mysqldump -h\'some-host\' -u\'some-user\' -p\'some-pass\' --compress --compact --no-create-info --no-tablespaces' .
                     ' --extended-insert --hex-blob --quick --complete-insert \'some-schema\' \'some-table\' ' .
                     '| process-mysqldump > \'some-file\''
                 )

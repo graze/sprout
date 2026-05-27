@@ -33,7 +33,7 @@ services:
       - ./seed:/seed:delegated
 
   db:
-    image: mysql:5
+    image: mysql:8.4
     environment:
       MYSQL_USER: dev
       MYSQL_PASSWORD: password
