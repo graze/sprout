@@ -54,8 +54,7 @@ class MysqlTableSeeder implements TableSeederInterface
             throw new InvalidArgumentException("seed: The file: {$file} does not exist");
         }
 
-        $process = new Process('');
-        $process->setCommandLine(
+        $process = Process::fromShellCommandline(
             sprintf(
                 '(echo %6$s; cat %5$s; echo %7$s) | mysql -h%1$s -u%2$s -p%3$s --max_allowed_packet=512M --default-character-set=utf8 %4$s',
                 escapeshellarg($this->connection->getHost()),

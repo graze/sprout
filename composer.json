@@ -29,15 +29,15 @@
   },
   "require": {
     "php": "^7.4",
-    "graze/parallel-process": "^0.7",
-    "graze/console-diff-renderer": "^0.6.1",
+    "graze/parallel-process": "^0.8.2",
+    "graze/console-diff-renderer": "^0.6.3",
     "graze/data-structure": "^2.0",
     "graze/config-validation": "^0.2",
     "league/flysystem": "^1.0",
     "psr/log": "^1.0",
     "respect/validation": "^1.1",
-    "symfony/console": "^3.3 | ^4",
-    "symfony/yaml": "^3.3 | ^4"
+    "symfony/console": "^5",
+    "symfony/yaml": "^5"
   },
   "require-dev": {
     "graze/standards": "^2.0",

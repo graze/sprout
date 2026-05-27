@@ -30,13 +30,14 @@ class MysqlTableDumperTest extends TestCase
     {
         $process = Mockery::mock('overload:' . Process::class);
 
-        $process->shouldReceive('setCommandLine')
+        $process->shouldReceive('fromShellCommandline')
                 ->with(
                     'mysqldump -h\'some-host\' -u\'some-user\' -p\'some-pass\' --compress --compact --no-create-info --no-tablespaces' .
                     ' --extended-insert --hex-blob --quick --complete-insert \'some-schema\' \'some-table\' ' .
                     '| process-mysqldump > \'some-file\''
                 )
-                ->once();
+                ->once()
+                ->andReturnSelf();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getHost')

@@ -44,8 +44,7 @@ class MysqlTableDumper implements TableDumperInterface
      */
     public function dump(string $schema, string $table, string $file)
     {
-        $process = new Process('');
-        $process->setCommandLine(
+        $process = Process::fromShellCommandline(
             sprintf(
                 'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info --no-tablespaces' .
                 ' --extended-insert --hex-blob --quick --complete-insert %4$s %5$s ' .

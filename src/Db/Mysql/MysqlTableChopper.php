@@ -55,8 +55,7 @@ class MysqlTableChopper implements TableChopperInterface
                 )
             )
         );
-        $process = new Process('');
-        $process->setCommandLine(
+        $process = Process::fromShellCommandline(
             sprintf(
                 'mysql -h%1$s -u%2$s -p%3$s --default-character-set=utf8 --execute=%5$s %4$s',
                 escapeshellarg($this->connection->getHost()),
