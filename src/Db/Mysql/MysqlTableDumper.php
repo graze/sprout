@@ -47,7 +47,7 @@ class MysqlTableDumper implements TableDumperInterface
         $process = new Process('');
         $process->setCommandLine(
             sprintf(
-                'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info' .
+                'mysqldump -h%1$s -u%2$s -p%3$s --compress --compact --no-create-info --no-tablespaces' .
                 ' --extended-insert --hex-blob --quick --complete-insert %4$s %5$s ' .
                 '| process-mysqldump > %6$s',
                 escapeshellarg($this->connection->getHost()),
