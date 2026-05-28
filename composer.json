@@ -32,10 +32,10 @@
     "graze/parallel-process": "^1.0",
     "graze/console-diff-renderer": "^1.1",
     "graze/data-structure": "^2.0",
-    "graze/config-validation": "^0.2",
+    "graze/config-validation": "^1.0",
     "league/flysystem": "^1.0",
     "psr/log": "^1.0",
-    "respect/validation": "^1.1",
+    "respect/validation": "^2.2",
     "symfony/console": "^5",
     "symfony/yaml": "^5"
   },
