@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d005684b66d5e38d01ea46308d530c0",
+    "content-hash": "1b1abd20030670ba1e1acea201bd3afa",
     "packages": [
         {
             "name": "graze/config-validation",
@@ -3854,7 +3854,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4"
+        "php": "^7.4 || ^8.0"
     },
     "platform-dev": {},
     "platform-overrides": {

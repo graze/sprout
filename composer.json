@@ -28,7 +28,7 @@
     }
   },
   "require": {
-    "php": "^7.4",
+    "php": "^7.4 || ^8.0",
     "graze/parallel-process": "^1.0",
     "graze/console-diff-renderer": "^1.1",
     "graze/data-structure": "^2.0",
