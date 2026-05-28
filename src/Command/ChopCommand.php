@@ -13,8 +13,8 @@
 
 namespace Graze\Sprout\Command;
 
-use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Display\Table;
+use Graze\ParallelProcess\PriorityPool;
 use Graze\Sprout\Chop\Chopper;
 use Graze\Sprout\Chop\TableChopperFactory;
 use Graze\Sprout\Config\Config;
@@ -95,14 +95,14 @@ class ChopCommand extends Command
 
         $useGlobal = count($parsedSchemas) <= 10;
 
-        $globalPool = new Pool();
+        $globalPool = new PriorityPool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
         foreach ($parsedSchemas as $schema) {
             if ($useGlobal) {
                 $pool = $globalPool;
             } else {
-                $pool = new Pool(
+                $pool = new PriorityPool(
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,

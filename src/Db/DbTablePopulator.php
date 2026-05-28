@@ -31,7 +31,7 @@ class DbTablePopulator implements TablePopulatorInterface
      * @param PdoFactory|null    $pdoFactory
      * @param TableFilterer|null $tableFilterer
      */
-    public function __construct(PdoFactory $pdoFactory = null, TableFilterer $tableFilterer = null)
+    public function __construct(?PdoFactory $pdoFactory = null, ?TableFilterer $tableFilterer = null)
     {
         $this->pdoFactory = $pdoFactory ?: new PdoFactory();
         $this->tableFilterer = $tableFilterer ?: new TableFilterer();

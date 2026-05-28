@@ -69,7 +69,7 @@ class DbTablePopulatorTest extends TestCase
             ->andReturns($statement);
         $statement->allows()
                   ->execute(['schema' => 'schema1'])
-                  ->andReturns($statement);
+                  ->andReturns(true);
         $statement->allows()
                   ->fetchAll(PDO::FETCH_COLUMN)
                   ->andReturns(['table1', 'table2']);
@@ -133,7 +133,7 @@ class DbTablePopulatorTest extends TestCase
             ->andReturns($statement);
         $statement->allows()
                   ->execute(['schema' => 'schema1'])
-                  ->andReturns($statement);
+                  ->andReturns(true);
         $statement->allows()
                   ->fetchAll(PDO::FETCH_COLUMN)
                   ->andReturns(['table1', 'table2']);

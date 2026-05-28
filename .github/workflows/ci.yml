@@ -12,8 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4']
-        prefer_lowest: [false, true]
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        prefer_lowest: [false]
+        include:
+          # Only exercise the lowest-supported dependency set on the floor PHP
+          # version; older tooling (e.g. phpcs 3.3) cannot run on PHP 8.
+          - php: '7.4'
+            prefer_lowest: true
     steps:
       - uses: actions/checkout@v4
 

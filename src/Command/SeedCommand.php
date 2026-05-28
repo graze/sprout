@@ -14,8 +14,8 @@
 namespace Graze\Sprout\Command;
 
 use Exception;
-use Graze\ParallelProcess\Pool;
-use Graze\ParallelProcess\Table;
+use Graze\ParallelProcess\Display\Table;
+use Graze\ParallelProcess\PriorityPool;
 use Graze\Sprout\Config\Config;
 use Graze\Sprout\Parser\FileTablePopulator;
 use Graze\Sprout\Parser\ParsedSchema;
@@ -123,7 +123,7 @@ class SeedCommand extends Command
 
         $useGlobal = $numTables <= 10;
 
-        $globalPool = new Pool();
+        $globalPool = new PriorityPool();
         $globalPool->setMaxSimultaneous($config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES));
 
         foreach ($parsedSchemas as $schema) {
@@ -138,7 +138,7 @@ class SeedCommand extends Command
             if ($useGlobal) {
                 $pool = $globalPool;
             } else {
-                $pool = new Pool(
+                $pool = new PriorityPool(
                     [],
                     $config->get(Config::CONFIG_DEFAULT_SIMULTANEOUS_PROCESSES),
                     false,

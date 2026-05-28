@@ -43,11 +43,10 @@ class TableSeederFactoryTest extends TestCase
         $this->assertInstanceOf(MysqlTableSeeder::class, $tableSeeder);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnknownThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);

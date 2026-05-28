@@ -40,11 +40,10 @@ class TableChopperFactoryTest extends TestCase
         $this->assertInstanceOf(MysqlTableChopper::class, $tableChopper);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnknownThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $processTable = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);

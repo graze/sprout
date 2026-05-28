@@ -30,9 +30,10 @@ class MysqlTableChopperTest extends TestCase
     {
         $process = Mockery::mock('overload:' . Process::class);
 
-        $process->shouldReceive('setCommandLine')
+        $process->shouldReceive('fromShellCommandline')
                 ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'SET FOREIGN_KEY_CHECKS=0; TRUNCATE `some-table`; SET FOREIGN_KEY_CHECKS=1;\' \'some-schema\'')
-                ->once();
+                ->once()
+                ->andReturnSelf();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getHost')
@@ -59,9 +60,10 @@ class MysqlTableChopperTest extends TestCase
     {
         $process = Mockery::mock('overload:' . Process::class);
 
-        $process->shouldReceive('setCommandLine')
+        $process->shouldReceive('fromShellCommandline')
                 ->with('mysql -h\'some-host\' -u\'some-user\' -p\'some-pass\' --default-character-set=utf8 --execute=\'SET FOREIGN_KEY_CHECKS=0; TRUNCATE `some-table`; TRUNCATE `some-table-2`; SET FOREIGN_KEY_CHECKS=1;\' \'some-schema\'')
-                ->once();
+                ->once()
+                ->andReturnSelf();
 
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $config->shouldReceive('getHost')

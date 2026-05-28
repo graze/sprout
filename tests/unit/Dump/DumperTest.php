@@ -140,12 +140,11 @@ class DumperTest extends TestCase
         $this->dumper->dump('/some/path/schema', $tables);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage dump: failed to create directory: /some/path/schema
-     */
     public function testDumperThrowsAnExceptionIfUnableToCreateTheDirectory()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('dump: failed to create directory: /some/path/schema');
+
         $connConfig = Mockery::mock(ConnectionConfigInterface::class);
         $this->config->shouldReceive('getConnection')
                      ->andReturn($connConfig);

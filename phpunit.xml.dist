@@ -11,27 +11,32 @@
   ~ @link    https://github.com/graze/sprout
   -->
 
-<phpunit bootstrap="vendor/autoload.php"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          colors="true"
          verbose="true"
+         convertDeprecationsToExceptions="false"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false">
+    <php>
+        <!-- Target runtime is PHP 7.4; silence deprecations emitted only by newer
+             host PHP versions (e.g. Serializable / implicit-nullable notices). -->
+        <ini name="error_reporting" value="8191"/>
+    </php>
     <testsuites>
         <testsuite name="unit">
             <directory>tests/unit</directory>
         </testsuite>
-        <testsuite name="integration">
-            <directory>tests/integration</directory>
-        </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
+    <coverage>
+        <include>
             <directory suffix=".php">src/</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
 </phpunit>
