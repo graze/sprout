@@ -40,11 +40,10 @@ class TableDumperFactoryTest extends TestCase
         $this->assertInstanceOf(MysqlTableDumper::class, $tableDumper);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testUnknownThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $pool = Mockery::mock(Pool::class);
 
         $config = Mockery::mock(ConnectionConfigInterface::class);

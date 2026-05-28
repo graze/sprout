@@ -32,7 +32,7 @@ class SchemaParser
      * @param Config                  $config
      * @param string|null             $group
      */
-    public function __construct(TablePopulatorInterface $populator, Config $config, string $group = null)
+    public function __construct(TablePopulatorInterface $populator, Config $config, ?string $group = null)
     {
         $this->populator = $populator;
         $this->config = $config;

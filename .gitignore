@@ -3,3 +3,4 @@
 /site/
 
 .idea
+.phpunit.result.cache

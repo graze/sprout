@@ -62,11 +62,10 @@ class MysqlTableSeederTest extends TestCase
         $tableSeeder->seed('some-file', 'some-schema', 'some-table');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFileExistsFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $config = Mockery::mock(ConnectionConfigInterface::class);
         $pool = Mockery::mock(Pool::class);
         $fileSystem = Mockery::mock(AdapterInterface::class);

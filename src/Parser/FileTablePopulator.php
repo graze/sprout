@@ -28,7 +28,7 @@ class FileTablePopulator implements TablePopulatorInterface
      * @param AdapterInterface   $filesystem
      * @param TableFilterer|null $tableFilterer
      */
-    public function __construct(AdapterInterface $filesystem, TableFilterer $tableFilterer = null)
+    public function __construct(AdapterInterface $filesystem, ?TableFilterer $tableFilterer = null)
     {
         $this->filesystem = $filesystem;
         $this->tableFilterer = $tableFilterer ?: new TableFilterer();
